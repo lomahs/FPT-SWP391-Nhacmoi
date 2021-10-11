@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,15 +19,11 @@ import java.util.List;
 public class Song {
 
     @Id
-    @TableGenerator(
-            name = "clazz_gen",
-            table = "id_gen",
-            pkColumnName = "gen_name",
-            valueColumnName = "gen_val",
-            allocationSize = 2
-    )
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "clazz_gen")
-    private int song_id;
+    @GeneratedValue(generator = "id_gen")
+    @GenericGenerator(name = "id_gen",
+            parameters = @Parameter(name = "prefix", value = "SO"),
+            strategy = "fpt.swp391.utils.IdGenerator")
+    private String song_id;
 
     @Column(columnDefinition = "nvarchar(50)")
     private String song_name;

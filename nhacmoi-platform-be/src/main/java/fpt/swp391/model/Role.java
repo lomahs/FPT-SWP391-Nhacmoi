@@ -16,16 +16,6 @@ import java.util.List;
 public class Role {
 
     @Id
-    @TableGenerator(
-            name = "clazz_gen",
-            table = "id_gen",
-            pkColumnName = "gen_name",
-            valueColumnName = "gen_val",
-            allocationSize = 2
-    )
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "clazz_gen")
-    private int role_id;
-
     @Column(length = 20)
     private String role_name;
 

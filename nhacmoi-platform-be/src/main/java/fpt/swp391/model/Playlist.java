@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,19 +18,15 @@ import java.util.List;
 public class Playlist {
 
     @Id
-    @TableGenerator(
-            name = "clazz_gen",
-            table = "id_gen",
-            pkColumnName = "gen_name",
-            valueColumnName = "gen_val",
-            allocationSize = 2
-    )
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "clazz_gen")
-    private int playlist_id;
+    @GeneratedValue(generator = "id_gen")
+    @GenericGenerator(name = "id_gen",
+            parameters = @Parameter(name = "prefix", value = "PL"),
+            strategy = "fpt.swp391.utils.IdGenerator")
+    private String playlist_id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_created_id")
+    private User user_created_id;
 
     @Column(columnDefinition = "nvarchar(50)")
     private String playlist_name;

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,15 +18,11 @@ import java.util.List;
 public class Category {
 
     @Id
-    @TableGenerator(
-            name = "clazz_gen",
-            table = "id_gen",
-            pkColumnName = "gen_name",
-            valueColumnName = "gen_val",
-            allocationSize = 2
-    )
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "clazz_gen")
-    private int category_id;
+    @GeneratedValue(generator = "id_gen")
+    @GenericGenerator(name = "id_gen",
+            parameters = @Parameter(name = "prefix", value = "CAT"),
+            strategy = "fpt.swp391.utils.IdGenerator")
+    private String category_id;
 
     @Column(unique = true, columnDefinition = "nvarchar(20)")
     private String category_name;
@@ -36,4 +34,8 @@ public class Category {
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
     private List<Song> listSong;
+
+    public Category(String category_name) {
+        this.category_name = category_name;
+    }
 }

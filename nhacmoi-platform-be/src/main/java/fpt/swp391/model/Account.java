@@ -15,16 +15,6 @@ import javax.persistence.*;
 public class Account {
 
     @Id
-    @TableGenerator(
-            name = "clazz_gen",
-            table = "id_gen",
-            pkColumnName = "gen_name",
-            valueColumnName = "gen_val",
-            allocationSize = 2
-    )
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "clazz_gen")
-    private int account_id;
-
     @Column(columnDefinition = "varchar(20)")
     private String account_name;
 
@@ -32,7 +22,7 @@ public class Account {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_name")
     private Role role;
 
     @OneToOne(mappedBy = "account")
