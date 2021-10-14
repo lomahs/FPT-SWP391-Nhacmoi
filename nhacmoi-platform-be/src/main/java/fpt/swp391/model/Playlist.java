@@ -8,6 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 @Getter
@@ -19,9 +22,7 @@ public class Playlist {
 
     @Id
     @GeneratedValue(generator = "id_gen")
-    @GenericGenerator(name = "id_gen",
-            parameters = @Parameter(name = "prefix", value = "PL"),
-            strategy = "fpt.swp391.utils.IdGenerator")
+    @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "PL"), strategy = "fpt.swp391.utils.IdGenerator")
     private String playlist_id;
 
     @ManyToOne
@@ -36,5 +37,6 @@ public class Playlist {
     private String playlist_image;
 
     @ManyToMany(mappedBy = "listPlaylists", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Song> listSongs;
 }

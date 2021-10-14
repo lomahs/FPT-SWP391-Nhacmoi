@@ -8,6 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 @Entity
@@ -19,23 +22,15 @@ public class Category {
 
     @Id
     @GeneratedValue(generator = "id_gen")
-    @GenericGenerator(name = "id_gen",
-            parameters = @Parameter(name = "prefix", value = "CAT"),
-            strategy = "fpt.swp391.utils.IdGenerator")
+    @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "CAT"), strategy = "fpt.swp391.utils.IdGenerator")
     private String category_id;
 
     @Column(unique = true, columnDefinition = "nvarchar(20)")
     private String category_name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "Song_Category",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "song_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinTable(name = "Song_Category", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "song_id"))
+    @JsonIgnore
     private List<Song> listSong;
 
-    public Category(String category_name) {
-        this.category_name = category_name;
-    }
 }

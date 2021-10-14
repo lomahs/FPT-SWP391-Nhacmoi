@@ -4,15 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,9 +27,7 @@ public class User {
 
     @Id
     @GeneratedValue(generator = "id_gen")
-    @GenericGenerator(name = "id_gen",
-            parameters = @Parameter(name = "prefix", value = "U"),
-            strategy = "fpt.swp391.utils.IdGenerator")
+    @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "U"), strategy = "fpt.swp391.utils.IdGenerator")
     private String user_id;
 
     @Column(columnDefinition = "nvarchar(30)")
@@ -40,9 +44,12 @@ public class User {
 
     private LocalDate birthday;
 
-    @OneToMany(mappedBy = "user_added", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user_added", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Song> listSong;
 
-    @OneToMany(mappedBy = "user_created_id", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user_created_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Playlist> listPlaylist;
+
 }

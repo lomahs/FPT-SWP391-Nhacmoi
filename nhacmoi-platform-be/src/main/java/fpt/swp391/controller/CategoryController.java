@@ -2,21 +2,27 @@ package fpt.swp391.controller;
 
 import fpt.swp391.model.Category;
 import fpt.swp391.repository.CategoryRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/api/category/")
 public class CategoryController {
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @GetMapping("create/{name}")
-    public void CreateCategory(@PathVariable("name") String name){
-        Category cat = new Category(name);
+    @GetMapping("{id}")
+    public Category CreateCategory(@PathVariable("id") String id) {
+        return categoryRepository.findById(id).get();
+    }
 
-        categoryRepository.save(cat);
+    @GetMapping()
+    public List<Category> test() {
+        return categoryRepository.findAll();
+
     }
 }

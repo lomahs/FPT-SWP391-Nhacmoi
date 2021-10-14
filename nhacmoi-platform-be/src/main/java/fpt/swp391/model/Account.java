@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,5 +28,6 @@ public class Account {
     private Role role;
 
     @OneToOne(mappedBy = "account")
+    @JsonIgnore
     private User user;
 }

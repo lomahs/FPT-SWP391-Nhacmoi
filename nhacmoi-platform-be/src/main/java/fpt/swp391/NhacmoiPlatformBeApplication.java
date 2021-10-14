@@ -8,6 +8,7 @@ public class NhacmoiPlatformBeApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(NhacmoiPlatformBeApplication.class, args);
+
     }
 
 }

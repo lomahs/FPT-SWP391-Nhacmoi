@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 @Getter
@@ -20,5 +23,6 @@ public class Role {
     private String role_name;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Account> listAccount;
 }
