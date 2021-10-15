@@ -13,7 +13,7 @@ INSERT INTO category VALUES ('CAT0007','Party')
 INSERT INTO [role] VALUES ('admin')
 INSERT INTO [role] VALUES ('moderator')
 INSERT INTO [role] VALUES ('member')
-INSERT INTO [role] VALUES ('guess')
+
 
 -- Account
 -- DELETE FROM account
@@ -26,7 +26,6 @@ INSERT INTO account VALUES ('minh','123','admin')
 INSERT INTO account VALUES ('khue','123','admin')
 INSERT INTO account VALUES ('noname','123','moderator')
 INSERT INTO account VALUES ('nguoiyeudatker','123','member')
-INSERT INTO account VALUES ('khach','123','guess')
 
 -- User
 -- DELETE FROM [user]
@@ -39,16 +38,15 @@ INSERT INTO [user] VALUES ('U0006',null,'M',null,'Nguyễn Tuấn Minh','minh')
 INSERT INTO [user] VALUES ('U0007',null,'M',null,'Nguyễn Hà Khuê','khue')
 INSERT INTO [user] VALUES ('U0008',null,'O',null,'Vô danh tiểu tốt','noname')
 INSERT INTO [user] VALUES ('U0009',null,'F',null,'Bồ của đạtker','nguoiyeudatker')
-INSERT INTO [user] VALUES ('U0010',null,'O',null,'Khách hàng bê đê','khach')
 
 -- Artist
 -- DELETE FROM artist
-INSERT INTO [artist] VALUES ('ART0001','JOY','')
-INSERT INTO [artist] VALUES ('ART0002','Charlie Puth','')
-INSERT INTO [artist] VALUES ('ART0003','Sơn Tùng MTP','')
-INSERT INTO [artist] VALUES ('ART0004','Bích Phương','')
-INSERT INTO [artist] VALUES ('ART0005','Andiez','')
-INSERT INTO [artist] VALUES ('ART0006','Hoà Minzy','')
+INSERT INTO [artist] VALUES ('ART0001','JOY','???')
+INSERT INTO [artist] VALUES ('ART0002','Charlie Puth','???')
+INSERT INTO [artist] VALUES ('ART0003','Sơn Tùng MTP','???')
+INSERT INTO [artist] VALUES ('ART0004','Bích Phương','???')
+INSERT INTO [artist] VALUES ('ART0005','Andiez','???')
+INSERT INTO [artist] VALUES ('ART0006','Hoà Minzy','???')
 
 -- Song
 -- DELETE FROM song
@@ -62,13 +60,45 @@ INSERT INTO song VALUES ('SO0007',null,null,2000,null,'Nàng thơ',31000,'U0006'
 INSERT INTO song VALUES ('SO0008',null,null,2000,null,'Em gái mưa',2400,'U0009')
 INSERT INTO song VALUES ('SO0009',null,null,12200,null,'Rời bỏ',500,'U0004')
 
+--Song & Category
+INSERT INTO song_category VALUES ('CAT0004','SO0001')
+INSERT INTO song_category VALUES ('CAT0003','SO0002')
+INSERT INTO song_category VALUES ('CAT0005','SO0003')
+INSERT INTO song_category VALUES ('CAT0006','SO0004')
+INSERT INTO song_category VALUES ('CAT0007','SO0005')
+INSERT INTO song_category VALUES ('CAT0001','SO0006')
+INSERT INTO song_category VALUES ('CAT0002','SO0007')
+INSERT INTO song_category VALUES ('CAT0003','SO0008')
+INSERT INTO song_category VALUES ('CAT0002','SO0009')
 
--- SELECT * FROM song
+--Song & Artist
+INSERT INTO song_artist VALUES ('SO0001','ART0001')
+INSERT INTO song_artist VALUES ('SO0002','ART0002')
+INSERT INTO song_artist VALUES ('SO0003','ART0003')
+INSERT INTO song_artist VALUES ('SO0004','ART0004')
+INSERT INTO song_artist VALUES ('SO0005','ART0005')
+INSERT INTO song_artist VALUES ('SO0006','ART0006')
+INSERT INTO song_artist VALUES ('SO0007','ART0002')
+INSERT INTO song_artist VALUES ('SO0008','ART0003')
+INSERT INTO song_artist VALUES ('SO0009','ART0004')
+
+--Playlist
+INSERT INTO playlist VALUES ('PL0001',2000,'abc','Test playlist','U0001')
+
+
+DELETE FROM song WHERE song_id = 'SO0007'
+SELECT * FROM song
 -- SELECT * FROM category
--- SELECT * FROM song_category
+SELECT * FROM song_category
+SELECT * FROM song_artist
+SELECT * FROM [user]
+INSERT INTO song_category VALUES ('CAT0004','SO0001')
 
--- INSERT INTO song_category VALUES ('CAT0004','SO0001')
 -- INSERT INTO song_category VALUES ('CAT0001','SO0001')
 -- INSERT INTO song_category VALUES ('CAT0002','SO0002')
 
--- CREATE DATABASE nhacmoi
+CREATE DATABASE nhacmoi
+DELETE FROM song_category WHERE category_id = 'CAT0003' AND song_id = 'S0011'
+DROP DATABASE nhacmoi
+SELECT * FROM song_category
+SELECT * FROM account

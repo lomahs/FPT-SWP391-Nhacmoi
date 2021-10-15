@@ -52,7 +52,4 @@ public class Song {
         @JoinTable(name = "song_playlist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
         private List<Playlist> listPlaylists;
 
-        public void updateCategory(List<Category> list) {
-                categories = new ArrayList<>(list);
-        }
 }

@@ -55,18 +55,18 @@ public class SongServiceImpl implements ISongService {
     @Override
     public boolean deleteSong(String id) {
 
-        Song song = songRepository.getById(id);
-        if (song != null) {
-            song.setArtist(null);
-            song.setCategories(null);
-            song.setListPlaylists(null);
-            song.setUser_added(null);
-            songRepository.save(song);
-            songRepository.deleteById(id);
+        Song s = songRepository.findById(id).orElse(null);
+        if (s != null) {
+            s.getCategories().forEach(cate -> cate.getListSong().remove(s));
+            s.getArtist().forEach(artist -> artist.getListSong().remove(s));
+            List<Playlist> playlists = s.getListPlaylists();
+            if (!playlists.isEmpty())
+                s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
+            songRepository.save(s);
+            songRepository.delete(s);
             return true;
         }
         return false;
-
     }
 
     @Override
@@ -139,51 +139,32 @@ public class SongServiceImpl implements ISongService {
     public Song toSong(Map<String, Object> data) {
         Song song = new Song();
         song.setSong_name((String) data.get("song_name"));
-
-        // Lấy và thêm danh sách category
-        List<String> listCategoryId = (List<String>) data.get("categories");
-        if (!listCategoryId.isEmpty()) {
-            song.setCategories(new ArrayList<>());
-            listCategoryId.forEach(id -> {
-                Category category = (Category) categoryRepository.findById(id).orElse(null);
-                // Set 2 chiều để có liên kết, tương tự cho artist, playlist
-                song.getCategories().add(category);
-                // category.getListSong().add(song);
-                // categoryRepository.save(category);
-            });
-        }
-
         song.setPath((String) data.get("path"));
-        User user_added = userRepository.getById((String) data.get("user_id"));
+        User user_added = userRepository.getById((String) data.get("user_added"));
         song.setUser_added(user_added);
-
-        // Lấy và thêm danh sách artist
-        List<String> listArtistId = (List<String>) data.get("artists");
-        if (!listArtistId.isEmpty()) {
-            song.setListPlaylists(new ArrayList<>());
-            listArtistId.forEach(id -> {
-                Artist artist = (Artist) artistRepository.getById(id);
-                song.getArtist().add(artist);
-                artist.getListSong().add(song);
-            });
-        }
-
         song.setSong_image((String) data.get("image"));
         song.setSong_duration((int) data.get("duration"));
-        song.setDate_added((LocalDate) data.get("date_added"));
-        song.setStream_count((long) ((int) data.get("stream_count")));
-
-        // Lấy và thêm danh sách playlist
+        // Lấy và thêm danh sách category | Category luôn có
+        List<String> listCategoryId = (List<String>) data.get("categories");
+        song.setCategories(new ArrayList<>());
+        listCategoryId.forEach(id -> {
+            Category category = (Category) categoryRepository.findById(id).orElse(null);
+            song.getCategories().add(category);
+        });
+        // Lấy và thêm danh sách artist | Artist luôn có
+        List<String> listArtistId = (List<String>) data.get("artists");
+        song.setArtist(new ArrayList<>());
+        listArtistId.forEach(id -> {
+            Artist artist = (Artist) artistRepository.getById(id);
+            song.getArtist().add(artist);
+        });
+        // Lấy và thêm danh sách playlist | Playlist có thể trống
         List<String> listPlaylistId = (List<String>) data.get("playlists");
-        if (!listPlaylistId.isEmpty()) {
-            song.setListPlaylists(new ArrayList<>());
-            listPlaylistId.forEach(id -> {
-                Playlist playlist = (Playlist) playlistRepository.getById(id);
-                song.getListPlaylists().add(playlist);
-                playlist.getListSongs().add(song);
-            });
-        }
-
+        song.setListPlaylists(new ArrayList<>());
+        listPlaylistId.forEach(id -> {
+            Playlist playlist = (Playlist) playlistRepository.getById(id);
+            song.getListPlaylists().add(playlist);
+        });
         return song;
     }
 

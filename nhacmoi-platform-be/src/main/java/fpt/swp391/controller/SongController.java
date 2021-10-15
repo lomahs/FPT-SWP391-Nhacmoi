@@ -2,8 +2,8 @@ package fpt.swp391.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fpt.swp391.model.Category;
 import fpt.swp391.model.Song;
-import fpt.swp391.repository.CategoryRepository;
+import fpt.swp391.model.Playlist;
 import fpt.swp391.service.ISongService;
 
 @RestController
@@ -27,9 +26,6 @@ import fpt.swp391.service.ISongService;
 public class SongController {
     @Autowired
     private ISongService iSongService;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getAllSongs() {
@@ -64,9 +60,17 @@ public class SongController {
     public ResponseEntity<Song> createSong(@RequestBody Map<String, Object> data) {
         try {
             Song song = iSongService.toSong(data);
-            song.getCategories().forEach(cate -> {
-                cate.getListSong().add(song);
-            });
+            song.setDate_added(LocalDate.now());
+            song.setStream_count(0);
+
+            song.getCategories().forEach(cate -> cate.getListSong().add(song));
+
+            song.getArtist().forEach(artist -> artist.getListSong().add(song));
+
+            List<Playlist> playlists = song.getListPlaylists();
+            if (playlists != null)
+                playlists.forEach(playlist -> playlist.getListSongs().add(song));
+
             return iSongService.saveSong(song) ? new ResponseEntity<>(HttpStatus.CREATED)
                     : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } catch (Exception e) {
@@ -82,28 +86,28 @@ public class SongController {
             if (song == null)
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             Song item = iSongService.toSong(data);
-            // iSongService.saveSong(song);
-
             song.setArtist(item.getArtist());
-            // song.setCategories(new ArrayList<>(item.getCategories()));
-            song.updateCategory(item.getCategories());
             song.setDate_added(item.getDate_added());
             song.setPath(item.getPath());
             song.setSong_duration(item.getSong_duration());
             song.setSong_image(item.getSong_image());
             song.setSong_name(item.getSong_name());
             song.setUser_added(item.getUser_added());
-            if (iSongService.saveSong(song)) {
-                item.getCategories().forEach(cate -> {
-                    cate.getListSong().forEach(s -> {
-                        if (s.getSong_id().equals(song.getSong_id()))
-                            s.updateCategory(song.getCategories());
-                    });
-                    categoryRepository.save(cate);
-                });
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-            return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
+            // update category
+            song.getCategories().forEach(cate -> cate.getListSong().remove(song));
+            item.getCategories().forEach(cate -> cate.getListSong().add(song));
+            song.setCategories(item.getCategories());
+            // update artist
+            song.getArtist().forEach(artist -> artist.getListSong().remove(song));
+            item.getArtist().forEach(artist -> artist.getListSong().add(song));
+            song.setArtist(item.getArtist());
+            // update playlist
+            song.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(song));
+            item.getListPlaylists().forEach(playlist -> playlist.getListSongs().add(song));
+            song.setListPlaylists(item.getListPlaylists());
+
+            return iSongService.saveSong(song) ? new ResponseEntity<>(HttpStatus.OK)
+                    : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
