@@ -62,14 +62,10 @@ public class SongController {
             Song song = iSongService.toSong(data);
             song.setDate_added(LocalDate.now());
             song.setStream_count(0);
-
             song.getCategories().forEach(cate -> cate.getListSong().add(song));
-
             song.getArtist().forEach(artist -> artist.getListSong().add(song));
-
             List<Playlist> playlists = song.getListPlaylists();
-            if (playlists != null)
-                playlists.forEach(playlist -> playlist.getListSongs().add(song));
+            playlists.forEach(playlist -> playlist.getListSongs().add(song));
 
             return iSongService.saveSong(song) ? new ResponseEntity<>(HttpStatus.CREATED)
                     : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);

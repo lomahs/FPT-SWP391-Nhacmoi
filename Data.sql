@@ -91,14 +91,12 @@ SELECT * FROM song
 -- SELECT * FROM category
 SELECT * FROM song_category
 SELECT * FROM song_artist
+SELECT * FROM song_playlist
 SELECT * FROM [user]
 INSERT INTO song_category VALUES ('CAT0004','SO0001')
 
--- INSERT INTO song_category VALUES ('CAT0001','SO0001')
--- INSERT INTO song_category VALUES ('CAT0002','SO0002')
 
 CREATE DATABASE nhacmoi
-DELETE FROM song_category WHERE category_id = 'CAT0003' AND song_id = 'S0011'
 DROP DATABASE nhacmoi
 SELECT * FROM song_category
 SELECT * FROM account
