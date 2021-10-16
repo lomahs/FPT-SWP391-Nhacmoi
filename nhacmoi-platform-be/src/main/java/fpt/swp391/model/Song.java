@@ -27,7 +27,7 @@ public class Song {
         @Column(columnDefinition = "nvarchar(50)")
         private String song_name;
 
-        @ManyToMany(mappedBy = "listSong", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+        @ManyToMany(mappedBy = "listSong", fetch = FetchType.LAZY)
         private List<Category> categories;
 
         private String path;

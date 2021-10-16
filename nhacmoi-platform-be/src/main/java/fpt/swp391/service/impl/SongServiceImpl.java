@@ -1,11 +1,14 @@
 package fpt.swp391.service.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import fpt.swp391.model.Artist;
@@ -61,8 +64,8 @@ public class SongServiceImpl implements ISongService {
             List<Playlist> playlists = s.getListPlaylists();
             if (!playlists.isEmpty())
                 s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
-            songRepository.save(s);
-            songRepository.delete(s);
+
+            songRepository.deleteById(id);
             return true;
         }
         return false;
@@ -143,11 +146,12 @@ public class SongServiceImpl implements ISongService {
         song.setUser_added(user_added);
         song.setSong_image((String) data.get("image"));
         song.setSong_duration((int) data.get("duration"));
+//        song.setDate_added(LocalDate.parse((String) data.get("date_added"), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         // Lấy và thêm danh sách category | Category luôn có
         List<String> listCategoryId = (List<String>) data.get("categories");
         song.setCategories(new ArrayList<>());
         listCategoryId.forEach(id -> {
-            Category category = (Category) categoryRepository.findById(id).orElse(null);
+            Category category = categoryRepository.findById(id).orElse(null);
             song.getCategories().add(category);
         });
         // Lấy và thêm danh sách artist | Artist luôn có
