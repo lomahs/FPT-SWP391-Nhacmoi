@@ -94,7 +94,7 @@ public class SongServiceImpl implements ISongService {
                 Map<String, Object> u = new LinkedHashMap<>();
                 u.put("user_id", user.getUser_id());
                 u.put("user_name", user.getUser_name());
-                u.put("account_name", user.getAccount().getAccount_name());
+//                u.put("account_name", user.getAccount().getAccount_name());
                 data.add(u);
                 break;
             case "artist":
