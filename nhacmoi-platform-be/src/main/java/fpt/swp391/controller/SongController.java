@@ -87,6 +87,7 @@ public class SongController {
             song.setArtist(item.getArtist());
             // song.setCategories(new ArrayList<>(item.getCategories()));
             song.updateCategory(item.getCategories());
+            song.setCategories(item.getCategories());
             song.setDate_added(item.getDate_added());
             song.setPath(item.getPath());
             song.setSong_duration(item.getSong_duration());
@@ -96,8 +97,10 @@ public class SongController {
             if (iSongService.saveSong(song)) {
                 item.getCategories().forEach(cate -> {
                     cate.getListSong().forEach(s -> {
-                        if (s.getSong_id().equals(song.getSong_id()))
-                            s.updateCategory(song.getCategories());
+                    if (s.getSong_id().equals(song.getSong_id())) {
+                      s.updateCategory(song.getCategories());
+                      cate.getListSong().add(song);
+                    }
                     });
                     categoryRepository.save(cate);
                 });
