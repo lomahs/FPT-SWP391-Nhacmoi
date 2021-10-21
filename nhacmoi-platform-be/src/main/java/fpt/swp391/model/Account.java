@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Getter
 @Setter
@@ -25,9 +25,9 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "role_name")
+    @JsonBackReference
     private Role role;
 
     @OneToOne(mappedBy = "account")
-    @JsonIgnore
     private User user;
 }

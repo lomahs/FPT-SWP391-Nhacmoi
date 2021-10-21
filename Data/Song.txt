@@ -1,0 +1,29 @@
++ Get all song: (GET) localhost:8080/api/song/
++ Get 1 song by id : (GET) localhost:8080/api/song/id
+*Không để null mục nào. Category, user added bắt buộc có, 
+playlist có thể trống.
++ Create 1 song: (POST) localhost:8080/api/song/
+    {
+        "song_name": "Hello",
+        "categories": ["CAT0001","CAT0002"],
+        "path": "abc",
+        "user_added": "U0004",
+        "artists": ["ART0002","ART0003"],
+        "image": "abc",
+        "duration": 2000,
+        "playlists": ["PL0001"]
+    }
++ Update 1 song: (PUT) localhost:8080/api/song/id
+    {
+        "song_name": "abc",
+        "categories": ["CAT0002"],
+        "path": "abc",
+        "user_added": "U0002",
+        "artists": ["ART0002","ART0003"],
+        "image": "abc",
+        "duration": 2000,
+        "playlists": []
+        "date_added": "2021-10-21";
+        "stream_count": 30
+    }
++ Delete 1 song: (DELETE) localhost:8080/api/song/id

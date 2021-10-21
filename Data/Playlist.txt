@@ -1,0 +1,18 @@
++ Get all playlist: (GET) localhost:8080/api/playlist/
++ Get 1 playlist by id : (GET) localhost:8080/api/playlist/id
+*Không để null mục nào, song có thể trống
++ Create 1 playlist: (POST) localhost:8080/api/playlist
+    {
+        "user_created": "U0003",
+        "playlist_name": "Nhạc của tôi",
+        "playlist_image": "abc",
+        "songs": ["SO0001","SO0002","SO0003"]
+    }
++ Update 1 playlist: (PUT) localhost:8080/api/playlist/id
+    {
+        "user_created": "U0002",
+        "playlist_name": "Nhạc của tôi",
+        "playlist_image": "cba",
+        "songs": ["SO0001","SO0003"]
+    }
++ Delete 1 playlist : (DELETE) localhost:8080/api/playlist/id

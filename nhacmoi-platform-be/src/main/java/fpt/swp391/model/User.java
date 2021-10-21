@@ -11,8 +11,6 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,7 +34,7 @@ public class User {
     @Column(columnDefinition = "varchar(50)")
     private String user_email;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "account_name")
     private Account account;
 
@@ -45,11 +43,9 @@ public class User {
     private LocalDate birthday;
 
     @OneToMany(mappedBy = "user_added", fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Song> listSong;
 
-    @OneToMany(mappedBy = "user_created_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToMany(mappedBy = "user_created_id", fetch = FetchType.LAZY)
     private List<Playlist> listPlaylist;
 
 }

@@ -58,9 +58,7 @@ public class SongServiceImpl implements ISongService {
         if (s != null) {
             s.getCategories().forEach(cate -> cate.getListSong().remove(s));
             s.getArtist().forEach(artist -> artist.getListSong().remove(s));
-            List<Playlist> playlists = s.getListPlaylists();
-            if (!playlists.isEmpty())
-                s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
+            s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
             songRepository.save(s);
             songRepository.delete(s);
             return true;
@@ -78,39 +76,40 @@ public class SongServiceImpl implements ISongService {
     private List<Map<String, Object>> filterObjectData(String entityName, Song song) {
         List<Map<String, Object>> data = new ArrayList<>();
         switch (entityName) {
-            case "category":
-                song.getCategories().parallelStream().forEach(category -> {
-                    Map<String, Object> c = new LinkedHashMap<>();
-                    c.put("cate_id", category.getCategory_id());
-                    c.put("cate_name", category.getCategory_name());
-                    data.add(c);
-                });
-                break;
-            case "user":
-                User user = song.getUser_added();
-                Map<String, Object> u = new LinkedHashMap<>();
-                u.put("user_id", user.getUser_id());
-                u.put("user_name", user.getUser_name());
-                u.put("account_name", user.getAccount().getAccount_name());
-                data.add(u);
-                break;
-            case "artist":
-                song.getArtist().parallelStream().forEach(artist -> {
-                    Map<String, Object> a = new LinkedHashMap<>();
-                    a.put("artist_id", artist.getArtist_id());
-                    a.put("artist_name", artist.getArtist_name());
-                    data.add(a);
-                });
-            case "playlist":
-                song.getListPlaylists().parallelStream().forEach(playlist -> {
-                    Map<String, Object> p = new LinkedHashMap<>();
-                    p.put("playlist_id", playlist.getPlaylist_id());
-                    p.put("playlist_name", playlist.getPlaylist_name());
-                    p.put("playlist_image", playlist.getPlaylist_image());
-                    data.add(p);
-                });
-            default:
-                break;
+        case "category":
+            song.getCategories().forEach(category -> {
+                Map<String, Object> c = new LinkedHashMap<>();
+                c.put("cate_id", category.getCategory_id());
+                c.put("cate_name", category.getCategory_name());
+                data.add(c);
+            });
+            break;
+        case "user":
+            User user = song.getUser_added();
+            Map<String, Object> u = new LinkedHashMap<>();
+            u.put("user_id", user.getUser_id());
+            u.put("user_name", user.getUser_name());
+            u.put("account_name", user.getAccount().getAccount_name());
+            data.add(u);
+            break;
+        case "artist":
+            song.getArtist().forEach(artist -> {
+                Map<String, Object> a = new LinkedHashMap<>();
+                a.put("artist_id", artist.getArtist_id());
+                a.put("artist_name", artist.getArtist_name());
+                data.add(a);
+            });
+            break;
+        case "playlist":
+            song.getListPlaylists().forEach(playlist -> {
+                Map<String, Object> p = new LinkedHashMap<>();
+                p.put("playlist_id", playlist.getPlaylist_id());
+                p.put("playlist_name", playlist.getPlaylist_name());
+                p.put("playlist_image", playlist.getPlaylist_image());
+                data.add(p);
+            });
+        default:
+            break;
         }
         return data;
     }

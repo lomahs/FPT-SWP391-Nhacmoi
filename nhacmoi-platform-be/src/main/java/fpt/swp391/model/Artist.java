@@ -9,7 +9,7 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.util.List;
 
@@ -31,11 +31,7 @@ public class Artist {
     private String image;
 
     @ManyToMany(mappedBy = "artist")
-    @JsonIgnore
+    @JsonBackReference
     private List<Song> listSong;
-
-    public Artist(String artist_name) {
-        this.artist_name = artist_name;
-    }
 
 }

@@ -89,6 +89,7 @@ public class SongController {
             song.setSong_image(item.getSong_image());
             song.setSong_name(item.getSong_name());
             song.setUser_added(item.getUser_added());
+            song.setStream_count(item.getStream_count());
             // update category
             song.getCategories().forEach(cate -> cate.getListSong().remove(song));
             item.getCategories().forEach(cate -> cate.getListSong().add(song));

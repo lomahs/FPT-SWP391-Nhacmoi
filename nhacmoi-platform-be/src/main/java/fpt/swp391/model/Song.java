@@ -8,8 +8,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,17 +30,20 @@ public class Song {
         @Column(columnDefinition = "nvarchar(50)")
         private String song_name;
 
-        @ManyToMany(mappedBy = "listSong", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+        @ManyToMany(mappedBy = "listSong", fetch = FetchType.LAZY)
+        @JsonBackReference
         private List<Category> categories;
 
         private String path;
 
         @ManyToOne
         @JoinColumn(name = "user_added_id")
+        @JsonBackReference
         private User user_added;
 
         @ManyToMany
         @JoinTable(name = "song_artist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
+        @JsonBackReference
         private List<Artist> artist;
 
         private String song_image;
@@ -48,8 +54,9 @@ public class Song {
 
         private long stream_count;
 
-        @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(name = "song_playlist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
+        @JsonBackReference
         private List<Playlist> listPlaylists;
 
 }
