@@ -25,14 +25,15 @@ import fpt.swp391.service.ISongService;
 @RequestMapping("/api/song/")
 public class SongController {
     @Autowired
-    private ISongService iSongService;
+    private ISongService songService;
 
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getAllSongs() {
         try {
-            List<Song> songs = iSongService.getListSongs();
-            List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-            songs.forEach(song -> data.add(iSongService.toJson(song)));
+            List<Song> songs = songService.getListSongs();
+            List<Map<String, Object>> data = new ArrayList<>();
+
+            songs.forEach(song -> data.add(songService.toJson(song)));
             return data.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                     : new ResponseEntity<>(data, HttpStatus.OK);
         } catch (Exception e) {
@@ -44,9 +45,9 @@ public class SongController {
     @GetMapping("{id}")
     public ResponseEntity<Map<String, Object>> getSongById(@PathVariable("id") String id) {
         try {
-            Song song = iSongService.getSongById(id);
+            Song song = songService.getSongById(id);
             if (song != null) {
-                Map<String, Object> data = iSongService.toJson(song);
+                Map<String, Object> data = songService.toJson(song);
                 return new ResponseEntity<>(data, HttpStatus.OK);
             }
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -59,15 +60,15 @@ public class SongController {
     @PostMapping
     public ResponseEntity<Song> createSong(@RequestBody Map<String, Object> data) {
         try {
-            Song song = iSongService.toSong(data);
+            Song song = songService.toSong(data);
             song.setDate_added(LocalDate.now());
             song.setStream_count(0);
+
             song.getCategories().forEach(cate -> cate.getListSong().add(song));
             song.getArtist().forEach(artist -> artist.getListSong().add(song));
-            List<Playlist> playlists = song.getListPlaylists();
-            playlists.forEach(playlist -> playlist.getListSongs().add(song));
+            song.getListPlaylists().forEach(playlist -> playlist.getListSongs().add(song));
 
-            return iSongService.saveSong(song) ? new ResponseEntity<>(HttpStatus.CREATED)
+            return songService.saveSong(song) ? new ResponseEntity<>(HttpStatus.CREATED)
                     : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,12 +79,12 @@ public class SongController {
     @PutMapping("{id}")
     public ResponseEntity<Song> updateSong(@PathVariable("id") String id, @RequestBody Map<String, Object> data) {
         try {
-            Song song = iSongService.getSongById(id);
+            Song song = songService.getSongById(id);
             if (song == null)
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            Song item = iSongService.toSong(data);
+            Song item = songService.toSong(data);
             song.setArtist(item.getArtist());
-            song.setDate_added(item.getDate_added());
+//            song.setDate_added(item.getDate_added());
             song.setPath(item.getPath());
             song.setSong_duration(item.getSong_duration());
             song.setSong_image(item.getSong_image());
@@ -103,7 +104,7 @@ public class SongController {
             item.getListPlaylists().forEach(playlist -> playlist.getListSongs().add(song));
             song.setListPlaylists(item.getListPlaylists());
 
-            return iSongService.saveSong(song) ? new ResponseEntity<>(HttpStatus.OK)
+            return songService.saveSong(song) ? new ResponseEntity<>(HttpStatus.OK)
                     : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,7 +115,7 @@ public class SongController {
     @DeleteMapping("{id}")
     public ResponseEntity<HttpStatus> deleteSong(@PathVariable("id") String id) {
         try {
-            return iSongService.deleteSong(id) ? new ResponseEntity<>(HttpStatus.OK)
+            return songService.deleteSong(id) ? new ResponseEntity<>(HttpStatus.OK)
                     : new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();

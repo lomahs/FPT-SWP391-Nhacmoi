@@ -9,7 +9,7 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
@@ -28,9 +28,8 @@ public class Category {
     @Column(unique = true, columnDefinition = "nvarchar(20)")
     private String category_name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "Song_Category", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "song_id"))
-    @JsonBackReference
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinTable(name = "song_category", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "song_id"))
     private List<Song> listSong;
 
 }
