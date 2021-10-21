@@ -50,7 +50,6 @@ public class PlaylistServiceImpl implements IPlaylistService {
         Playlist playlist = getPlaylistById(id);
         if (playlist != null) {
             playlist.getListSongs().forEach(song -> song.getListPlaylists().remove(playlist));
-            playlistRepository.save(playlist);
             playlistRepository.delete(playlist);
             return true;
         }

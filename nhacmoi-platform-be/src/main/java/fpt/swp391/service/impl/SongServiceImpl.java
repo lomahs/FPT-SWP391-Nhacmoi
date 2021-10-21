@@ -59,7 +59,6 @@ public class SongServiceImpl implements ISongService {
             s.getCategories().forEach(cate -> cate.getListSong().remove(s));
             s.getArtist().forEach(artist -> artist.getListSong().remove(s));
             s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
-            songRepository.save(s);
             songRepository.delete(s);
             return true;
         }

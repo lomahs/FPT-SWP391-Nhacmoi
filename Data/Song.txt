@@ -1,6 +1,6 @@
 + Get all song: (GET) localhost:8080/api/song/
 + Get 1 song by id : (GET) localhost:8080/api/song/id
-*Không để null mục nào. Category, user added bắt buộc có, 
+*Không nên để null mục nào. Category & user added bắt buộc có, 
 playlist có thể trống.
 + Create 1 song: (POST) localhost:8080/api/song/
     {

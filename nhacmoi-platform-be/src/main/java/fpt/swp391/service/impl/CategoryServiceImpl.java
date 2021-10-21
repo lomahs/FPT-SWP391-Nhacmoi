@@ -41,7 +41,6 @@ public class CategoryServiceImpl implements ICategoryService {
         Category category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
             category.getListSong().forEach(song -> song.getCategories().remove(category));
-            categoryRepository.save(category);
             categoryRepository.delete(category);
             return true;
         }

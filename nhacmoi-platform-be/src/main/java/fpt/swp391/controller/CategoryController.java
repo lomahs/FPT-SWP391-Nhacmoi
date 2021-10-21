@@ -84,7 +84,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> deletePlaylist(@PathVariable("id") String id) {
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") String id) {
         try {
             return iCategoryService.deleteCategory(id) ? new ResponseEntity<>(HttpStatus.OK)
                     : new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
