@@ -9,8 +9,6 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import java.util.List;
 
 @Entity
@@ -31,7 +29,6 @@ public class Artist {
     private String image;
 
     @ManyToMany(mappedBy = "artist")
-    @JsonBackReference
     private List<Song> listSong;
 
 }

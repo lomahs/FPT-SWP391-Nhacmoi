@@ -9,8 +9,6 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import java.util.List;
 
 @Getter
@@ -27,7 +25,6 @@ public class Playlist {
 
     @ManyToOne
     @JoinColumn(name = "user_created_id")
-    @JsonBackReference
     private User user_created_id;
 
     @Column(columnDefinition = "nvarchar(50)")
@@ -38,6 +35,5 @@ public class Playlist {
     private String playlist_image;
 
     @ManyToMany(mappedBy = "listPlaylists", fetch = FetchType.LAZY)
-    @JsonBackReference
     private List<Song> listSongs;
 }

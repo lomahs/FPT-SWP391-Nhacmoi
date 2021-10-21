@@ -8,8 +8,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -48,7 +48,7 @@ public class Song {
 
         private long stream_count;
 
-        @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(name = "song_playlist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
         private List<Playlist> listPlaylists;
 
