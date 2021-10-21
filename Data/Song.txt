@@ -22,8 +22,7 @@ playlist có thể trống.
         "artists": ["ART0002","ART0003"],
         "image": "abc",
         "duration": 2000,
-        "playlists": []
-        "date_added": "2021-10-21";
+        "playlists": [],
         "stream_count": 30
     }
 + Delete 1 song: (DELETE) localhost:8080/api/song/id
