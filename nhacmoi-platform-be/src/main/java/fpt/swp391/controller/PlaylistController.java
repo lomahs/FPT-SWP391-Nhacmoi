@@ -23,10 +23,10 @@ import fpt.swp391.service.IPlaylistService;
 @RequestMapping("/api/playlist/")
 public class PlaylistController {
     @Autowired
-    IPlaylistService iPlaylistService;
+    private IPlaylistService iPlaylistService;
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getAllSongs() {
+    public ResponseEntity<List<Map<String, Object>>> getAllPlaylists() {
         try {
             List<Playlist> listPlaylists = iPlaylistService.getListPlaylists();
             List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
