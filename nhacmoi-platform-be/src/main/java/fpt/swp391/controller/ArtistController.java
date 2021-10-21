@@ -16,21 +16,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fpt.swp391.model.Playlist;
-import fpt.swp391.service.IPlaylistService;
+import fpt.swp391.model.Artist;
+import fpt.swp391.service.IArtistService;
 
 @RestController
-@RequestMapping("/api/playlist/")
-public class PlaylistController {
+@RequestMapping("/api/artist/")
+public class ArtistController {
     @Autowired
-    private IPlaylistService iPlaylistService;
+    IArtistService iArtistService;
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getAllPlaylists() {
+    public ResponseEntity<List<Map<String, Object>>> getAllArtists() {
         try {
-            List<Playlist> listPlaylists = iPlaylistService.getListPlaylists();
+            List<Artist> artists = iArtistService.getListArtists();
             List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-            listPlaylists.forEach(playlist -> data.add(iPlaylistService.toJson(playlist)));
+            artists.forEach(Artist -> data.add(iArtistService.toJson(Artist)));
             return data.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                     : new ResponseEntity<>(data, HttpStatus.OK);
         } catch (Exception e) {
@@ -40,11 +40,11 @@ public class PlaylistController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Map<String, Object>> getPlaylistById(@PathVariable("id") String id) {
+    public ResponseEntity<Map<String, Object>> getArtistById(@PathVariable("id") String id) {
         try {
-            Playlist playlist = iPlaylistService.getPlaylistById(id);
-            if (playlist != null) {
-                Map<String, Object> data = iPlaylistService.toJson(playlist);
+            Artist artist = iArtistService.getArtistById(id);
+            if (artist != null) {
+                Map<String, Object> data = iArtistService.toJson(artist);
                 return new ResponseEntity<>(data, HttpStatus.OK);
             }
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -55,12 +55,11 @@ public class PlaylistController {
     }
 
     @PostMapping
-    public ResponseEntity<Playlist> createPlaylist(@RequestBody Map<String, Object> data) {
+    public ResponseEntity<Artist> createArtist(@RequestBody Map<String, Object> data) {
         try {
-            Playlist playlist = iPlaylistService.toPlaylist(data);
-            playlist.getListSongs().forEach(song -> song.getListPlaylists().add(playlist));
-            playlist.setPlaylist_duration(iPlaylistService.calculateDuration(playlist));
-            return iPlaylistService.savePlaylist(playlist) ? new ResponseEntity<>(HttpStatus.CREATED)
+            Artist artist = iArtistService.toArtist(data);
+            artist.getListSong().forEach(song -> song.getArtist().add(artist));
+            return iArtistService.saveArtist(artist) ? new ResponseEntity<>(HttpStatus.CREATED)
                     : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,24 +68,20 @@ public class PlaylistController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Playlist> updatePlaylist(@PathVariable("id") String id,
-            @RequestBody Map<String, Object> data) {
+    public ResponseEntity<Artist> updateArtist(@PathVariable("id") String id, @RequestBody Map<String, Object> data) {
         try {
-            Playlist playlist = iPlaylistService.getPlaylistById(id);
-            if (playlist == null)
+            Artist artist = iArtistService.getArtistById(id);
+            if (artist == null)
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            Playlist item = iPlaylistService.toPlaylist(data);
-            playlist.setPlaylist_name(item.getPlaylist_name());
-            playlist.setPlaylist_image(item.getPlaylist_image());
-            playlist.setUser_created_id(item.getUser_created_id());
+            Artist item = iArtistService.toArtist(data);
+            artist.setArtist_name(item.getArtist_name());
+            artist.setImage(item.getImage());
             // update list song
-            playlist.getListSongs().forEach(song -> song.getListPlaylists().remove(playlist));
-            item.getListSongs().forEach(song -> song.getListPlaylists().add(playlist));
-            playlist.setListSongs(item.getListSongs());
-            // update duration
-            playlist.setPlaylist_duration(iPlaylistService.calculateDuration(playlist));
+            artist.getListSong().forEach(song -> song.getArtist().remove(artist));
+            item.getListSong().forEach(song -> song.getArtist().add(artist));
+            artist.setListSong(item.getListSong());
 
-            return iPlaylistService.savePlaylist(playlist) ? new ResponseEntity<>(HttpStatus.OK)
+            return iArtistService.saveArtist(artist) ? new ResponseEntity<>(HttpStatus.OK)
                     : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,12 +92,11 @@ public class PlaylistController {
     @DeleteMapping("{id}")
     public ResponseEntity<HttpStatus> deletePlaylist(@PathVariable("id") String id) {
         try {
-            return iPlaylistService.deletePlaylist(id) ? new ResponseEntity<>(HttpStatus.OK)
+            return iArtistService.deleteArtist(id) ? new ResponseEntity<>(HttpStatus.OK)
                     : new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

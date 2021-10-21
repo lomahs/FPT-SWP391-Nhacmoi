@@ -1,0 +1,16 @@
++ Get all artist: (GET) localhost:8080/api/artist/
++ Get 1 artist by id : (GET) localhost:8080/api/artist/id
+*Không nên để null mục nào, song có thể trống
++ Create 1 artist: (POST) localhost:8080/api/artist/
+    {
+        "artist_name": "Nghệ sĩ nhân dân",
+        "artist_image": "???",
+        "songs": ["SO0002","SO0003"]
+    }
++ Update 1 artist: (PUT) localhost:8080/api/artist/id
+    {
+        "artist_name": "Nghệ sĩ",
+        "artist_image": "???",
+        "songs": ["SO0002"]
+    }
++ Delete 1 artist : (DELETE) localhost:8080/api/artist/id
