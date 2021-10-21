@@ -9,8 +9,6 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 @Entity
@@ -31,11 +29,6 @@ public class Artist {
     private String image;
 
     @ManyToMany(mappedBy = "artist")
-    @JsonIgnore
     private List<Song> listSong;
-
-    public Artist(String artist_name) {
-        this.artist_name = artist_name;
-    }
 
 }

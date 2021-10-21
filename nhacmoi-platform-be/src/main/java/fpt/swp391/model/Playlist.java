@@ -9,8 +9,6 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 @Getter
@@ -37,6 +35,5 @@ public class Playlist {
     private String playlist_image;
 
     @ManyToMany(mappedBy = "listPlaylists", fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Song> listSongs;
 }
