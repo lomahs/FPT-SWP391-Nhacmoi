@@ -1,14 +1,11 @@
 package fpt.swp391.service.impl;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import fpt.swp391.model.Artist;
@@ -61,11 +58,9 @@ public class SongServiceImpl implements ISongService {
         if (s != null) {
             s.getCategories().forEach(cate -> cate.getListSong().remove(s));
             s.getArtist().forEach(artist -> artist.getListSong().remove(s));
-            List<Playlist> playlists = s.getListPlaylists();
-            if (!playlists.isEmpty())
-                s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
-
-            songRepository.deleteById(id);
+            s.getListPlaylists().forEach(playlist -> playlist.getListSongs().remove(s));
+            songRepository.save(s);
+            songRepository.delete(s);
             return true;
         }
         return false;
@@ -81,39 +76,40 @@ public class SongServiceImpl implements ISongService {
     private List<Map<String, Object>> filterObjectData(String entityName, Song song) {
         List<Map<String, Object>> data = new ArrayList<>();
         switch (entityName) {
-            case "category":
-                song.getCategories().parallelStream().forEach(category -> {
-                    Map<String, Object> c = new LinkedHashMap<>();
-                    c.put("cate_id", category.getCategory_id());
-                    c.put("cate_name", category.getCategory_name());
-                    data.add(c);
-                });
-                break;
-            case "user":
-                User user = song.getUser_added();
-                Map<String, Object> u = new LinkedHashMap<>();
-                u.put("user_id", user.getUser_id());
-                u.put("user_name", user.getUser_name());
-                u.put("account_name", user.getAccount().getAccount_name());
-                data.add(u);
-                break;
-            case "artist":
-                song.getArtist().parallelStream().forEach(artist -> {
-                    Map<String, Object> a = new LinkedHashMap<>();
-                    a.put("artist_id", artist.getArtist_id());
-                    a.put("artist_name", artist.getArtist_name());
-                    data.add(a);
-                });
-            case "playlist":
-                song.getListPlaylists().parallelStream().forEach(playlist -> {
-                    Map<String, Object> p = new LinkedHashMap<>();
-                    p.put("playlist_id", playlist.getPlaylist_id());
-                    p.put("playlist_name", playlist.getPlaylist_name());
-                    p.put("playlist_image", playlist.getPlaylist_image());
-                    data.add(p);
-                });
-            default:
-                break;
+        case "category":
+            song.getCategories().forEach(category -> {
+                Map<String, Object> c = new LinkedHashMap<>();
+                c.put("cate_id", category.getCategory_id());
+                c.put("cate_name", category.getCategory_name());
+                data.add(c);
+            });
+            break;
+        case "user":
+            User user = song.getUser_added();
+            Map<String, Object> u = new LinkedHashMap<>();
+            u.put("user_id", user.getUser_id());
+            u.put("user_name", user.getUser_name());
+            u.put("account_name", user.getAccount().getAccount_name());
+            data.add(u);
+            break;
+        case "artist":
+            song.getArtist().forEach(artist -> {
+                Map<String, Object> a = new LinkedHashMap<>();
+                a.put("artist_id", artist.getArtist_id());
+                a.put("artist_name", artist.getArtist_name());
+                data.add(a);
+            });
+            break;
+        case "playlist":
+            song.getListPlaylists().forEach(playlist -> {
+                Map<String, Object> p = new LinkedHashMap<>();
+                p.put("playlist_id", playlist.getPlaylist_id());
+                p.put("playlist_name", playlist.getPlaylist_name());
+                p.put("playlist_image", playlist.getPlaylist_image());
+                data.add(p);
+            });
+        default:
+            break;
         }
         return data;
     }
@@ -146,12 +142,11 @@ public class SongServiceImpl implements ISongService {
         song.setUser_added(user_added);
         song.setSong_image((String) data.get("image"));
         song.setSong_duration((int) data.get("duration"));
-//        song.setDate_added(LocalDate.parse((String) data.get("date_added"), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         // Lấy và thêm danh sách category | Category luôn có
         List<String> listCategoryId = (List<String>) data.get("categories");
         song.setCategories(new ArrayList<>());
         listCategoryId.forEach(id -> {
-            Category category = categoryRepository.findById(id).orElse(null);
+            Category category = (Category) categoryRepository.findById(id).orElse(null);
             song.getCategories().add(category);
         });
         // Lấy và thêm danh sách artist | Artist luôn có
