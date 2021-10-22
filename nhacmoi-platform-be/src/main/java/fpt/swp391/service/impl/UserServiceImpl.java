@@ -8,12 +8,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fpt.swp391.model.Account;
-import fpt.swp391.model.Role;
 import fpt.swp391.model.User;
-import fpt.swp391.repository.AccountRepository;
-import fpt.swp391.repository.RoleRepository;
 import fpt.swp391.repository.UserRepository;
+import fpt.swp391.service.IAccountService;
+import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.IUserService;
 
 @Service
@@ -22,10 +20,10 @@ public class UserServiceImpl implements IUserService {
   private UserRepository userRepository;
 
   @Autowired
-  private RoleRepository roleRepository;
+  private IAccountService iAccountService;
 
   @Autowired
-  private AccountRepository accountRepository;
+  private IPlaylistService iPlaylistService;
 
   @Override
   public boolean saveUser(User user) {
@@ -41,8 +39,11 @@ public class UserServiceImpl implements IUserService {
     if (id != null) {
       User user = userRepository.getById(id);
       user.getListSong().forEach(song -> song.setUser_added(null));
+      user.getListPlaylist().forEach(playlist -> iPlaylistService.deletePlaylist(playlist.getPlaylist_id()));
       if (user != null) {
+        
         userRepository.delete(user);
+        iAccountService.deleteAccount(user.getAccount().getAccount_name());
         return true;
       }
     }
@@ -110,21 +111,5 @@ public class UserServiceImpl implements IUserService {
     }
     return data;
   }
-
-  // @Override
-  // public User toUser(Map<String, Object> data) {
-  //   User user = new User();
-  //   user.setUser_name((String) data.get("user_name"));
-  //   user.setUser_email((String) data.get("user_email"));
-  //   user.setSex((char) data.get("sex"));
-  //   // user.setBirthday(data.get("birthday")));
-  //   Role role = roleRepository.getById((String) data.get("role"));
-
-  //   user.setAccount(account);
-  //   // Account acc = new Account((String) data.get("account_name"), (String) data.get("password"), role, user);
-  //   // accountRepository.save(acc);
-  //   // user.setAccount(acc);
-  //   return user;
-  // }
 
 }
