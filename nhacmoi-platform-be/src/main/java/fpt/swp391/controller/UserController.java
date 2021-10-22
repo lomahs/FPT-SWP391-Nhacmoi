@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fpt.swp391.model.Account;
 import fpt.swp391.model.User;
-import fpt.swp391.repository.AccountRepository;
 import fpt.swp391.repository.RoleRepository;
+import fpt.swp391.service.IAccountService;
 import fpt.swp391.service.IUserService;
 
 @RestController
@@ -32,13 +32,14 @@ public class UserController {
   private RoleRepository roleRepository;
 
   @Autowired
-  private AccountRepository accountRepository;
+  private IAccountService iAccountService;
 
   @PostMapping
   public ResponseEntity<User> create(@RequestBody User user) {
     try {
       // User u = iUserService.toUser(user);
       user.getAccount().setRole(roleRepository.getById("member"));
+      iAccountService.saveAccount(user.getAccount());
       iUserService.saveUser(user);
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (Exception e) {

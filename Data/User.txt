@@ -1,0 +1,23 @@
++ Get all users: (GET) localhost:8080/api/user/
++ Get 1 user by id : (GET) localhost:8080/api/user/id
+*Tạo user mới auto set role là member
++ Create 1 user: (POST) localhost:8080/api/user/
+{
+    "user_name": "hieukhanh",
+    "user_email": "abc@123",
+    "sex": "F",
+    "account": {
+        "account_name": "nhk",
+        "password": "111"
+    }
+}
+*Không cho update account_name
++ Update 1 user: (PUT) localhost:8080/api/user/id
+{
+    "user_name": "user",
+    "user_email": "123@abc",
+    "sex" : "O",
+    "password": "xxx",
+    "role": "admin"
+}
++ Delete 1 user: (DELETE) localhost:8080/api/user/id
