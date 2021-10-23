@@ -1,5 +1,8 @@
 package fpt.swp391.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.time.LocalDate;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import fpt.swp391.model.Song;
 import fpt.swp391.model.Playlist;
 import fpt.swp391.service.ISongService;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/song/")
@@ -55,6 +60,46 @@ public class SongController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @GetMapping("stream/{id}")
+    public ResponseEntity<Byte[]> getStreamSong(HttpServletResponse response, @PathVariable("id") String id){
+        // đường dẫn đến folder chứa file nhạc trong máy,
+        // path của song ở database sẽ lưu tên bài hát.mp3, ví dụ Hello.mp3
+        String url = "C:\\Users\\tuanm\\Desktop\\music\\";
+        try{
+            Song song = iSongService.getSongById(id);
+            Path path = Paths.get(url+song.getPath());
+            response.setContentType("audio/mpeg");
+            Files.copy(path,response.getOutputStream());
+            response.flushBuffer();
+
+        }catch (Exception ignored){
+
+        }
+
+        return null;
+    }
+
+    @GetMapping("download/{id}")
+    public ResponseEntity<Byte[]> getDownLoadSong(HttpServletResponse response, @PathVariable("id") String id){
+        // đường dẫn đến folder chứa file nhạc trong máy
+        String url = "C:\\Users\\tuanm\\Desktop\\music\\";
+        try{
+            Song song = iSongService.getSongById(id);
+            Path path = Paths.get(url+song.getPath());
+            response.setContentType("audio/mpeg");
+            response.setHeader( "Content-Disposition", "attachment;filename=" + song.getPath());
+            Files.copy(path,response.getOutputStream());
+            response.flushBuffer();
+        }catch (Exception ignored){
+
+        }
+
+        return null;
+    }
+
+
 
     @PostMapping
     public ResponseEntity<Song> createSong(@RequestBody Map<String, Object> data) {

@@ -1,5 +1,6 @@
 package fpt.swp391.controller;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import fpt.swp391.model.Playlist;
 import fpt.swp391.service.IPlaylistService;
 
+
 @RestController
 @RequestMapping("/api/playlist/")
 public class PlaylistController {
+
     @Autowired
     private IPlaylistService iPlaylistService;
 
@@ -104,5 +107,6 @@ public class PlaylistController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 }
