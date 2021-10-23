@@ -3,14 +3,15 @@ package fpt.swp391.service;
 import fpt.swp391.model.Song;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ISongService {
 
-    Song getSongById(String id);
+    Optional<Song> getSongById(String id);
 
-    boolean saveSong(Song song);
+    Song saveSong(Song song);
 
-    boolean deleteSong(String id);
+    void deleteSongById(String id);
 
     List<Song> getListSongs();
 

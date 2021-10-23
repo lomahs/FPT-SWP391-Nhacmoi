@@ -3,11 +3,11 @@ package fpt.swp391.service.impl;
 import fpt.swp391.model.Category;
 import fpt.swp391.repository.CategoryRepository;
 import fpt.swp391.service.ICategoryService;
-import fpt.swp391.service.ISongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService implements ICategoryService {
@@ -15,32 +15,21 @@ public class CategoryService implements ICategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    ISongService songService;
-
     @Override
-    public Category getCategoryById(String id) {
-        return categoryRepository.findById(id).orElse(null);
+    public Optional<Category> getCategoryById(String id) {
+        return categoryRepository.findById(id);
     }
 
     @Override
-    public boolean saveCategory(Category category) {
-        if (category == null)
-            return false;
+    public Category saveCategory(Category category) {
 
-        categoryRepository.save(category);
-        return true;
+        return categoryRepository.save(category);
     }
 
     @Override
-    public boolean deleteCategory(String id) {
-        Category category = getCategoryById(id);
-        if (category != null) {
-//            category.getListSong().forEach(song -> song.getCategories().remove(category));
-            categoryRepository.delete(category);
-            return true;
-        }
-        return false;
+    public void deleteCategory(String id) {
+
+        categoryRepository.deleteById(id);
     }
 
     @Override

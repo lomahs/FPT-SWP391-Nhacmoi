@@ -3,21 +3,17 @@ package fpt.swp391.service;
 import fpt.swp391.model.Playlist;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 public interface IPlaylistService {
 
-    Playlist getPlaylistById(String id);
+    Optional<Playlist> getPlaylistById(String id);
 
-    boolean savePlaylist(Playlist playlist);
+    Playlist savePlaylist(Playlist playlist);
 
-    boolean deletePlaylist(String id);
+    void deletePlaylistById(String id);
 
     List<Playlist> getListPlaylists();
-
-    Map<String, Object> toJson(Playlist playlist);
-
-    Playlist toPlaylist(Map<String, Object> data);
 
     public int calculateDuration(Playlist playlist);
 }

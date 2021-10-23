@@ -3,13 +3,14 @@ package fpt.swp391.service;
 import fpt.swp391.model.Category;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ICategoryService {
-    Category getCategoryById(String id);
+    Optional<Category> getCategoryById(String id);
 
-    boolean saveCategory(Category category);
+    Category saveCategory(Category category);
 
-    boolean deleteCategory(String id);
+    void deleteCategory(String id);
 
     List<Category> getListCategories();
 }

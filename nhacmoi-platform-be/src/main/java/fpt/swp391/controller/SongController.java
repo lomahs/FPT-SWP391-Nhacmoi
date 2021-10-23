@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/song")
@@ -22,49 +23,41 @@ public class SongController {
 
     @GetMapping
     public ResponseEntity<List<Song>> getAllSongs() {
-        List<Song> songs = songService.getListSongs();
 
-        return songs.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(songs, HttpStatus.OK);
+        return new ResponseEntity<>(songService.getListSongs(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Song> getSongById(@PathVariable("id") String id) {
-        Song song = songService.getSongById(id);
+        Optional<Song> songOptional = songService.getSongById(id);
 
-        return song != null ? new ResponseEntity<>(song, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return songOptional.map(song -> new ResponseEntity<>(song, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/create")
     public ResponseEntity<Song> createSong(@RequestBody Song song) {
 
-        return songService.saveSong(song) ? new ResponseEntity<>(song, HttpStatus.CREATED)
-                : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
+        return new ResponseEntity<>(songService.saveSong(song), HttpStatus.CREATED);
     }
 
     @PutMapping("/edit")
     public ResponseEntity<Song> updateSong(@RequestBody Song song) {
 
-        if (songService.getSongById(song.getSong_id()) == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Optional<Song> songOptional = songService.getSongById(song.getSong_id());
 
-        return songService.saveSong(song) ? new ResponseEntity<>(song, HttpStatus.OK)
-                : new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-
+        return songOptional.map(s -> new ResponseEntity<>(songService.saveSong(song), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteSong(@PathVariable("id") String id) {
-        Song song = songService.getSongById(id);
+        Optional<Song> songOptional = songService.getSongById(id);
 
-        if (song == null) {
-            return new ResponseEntity<>("Can't find id", HttpStatus.NOT_FOUND);
-        }
-
-        return songService.deleteSong(id) ? new ResponseEntity<>("Delete Successful", HttpStatus.OK)
-                : new ResponseEntity<>("Can't find id", HttpStatus.NOT_FOUND);
-
+        return songOptional.map(song -> {
+            songService.deleteSongById(id);
+            return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
+        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 }

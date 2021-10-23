@@ -33,6 +33,17 @@ public class Playlist {
 
     private String playlist_image;
 
-    @ManyToMany(mappedBy = "listPlaylists")
+    @ManyToMany
+    @JoinTable(name = "playlist_song", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "song_id"))
     private Set<Song> listSongs = new HashSet<>();
+
+    public void addSong(Song song) {
+        listSongs.add(song);
+        song.getListPlaylists().add(this);
+    }
+
+    public void removeSong(Song song) {
+        listSongs.remove(song);
+        song.getListPlaylists().remove(this);
+    }
 }

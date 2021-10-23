@@ -46,12 +46,11 @@ public class Song {
 
     private int song_duration;
 
-    private LocalDate date_added;
+    private LocalDate date_added = LocalDate.now();
 
-    private long stream_count;
+    private long stream_count = 0;
 
-    @ManyToMany
-    @JoinTable(name = "song_playlist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
+    @ManyToMany(mappedBy = "listSongs")
     @JsonBackReference
     private Set<Playlist> listPlaylists;
 
