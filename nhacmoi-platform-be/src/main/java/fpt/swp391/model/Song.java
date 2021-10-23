@@ -1,5 +1,6 @@
 package fpt.swp391.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,37 +19,40 @@ import java.util.List;
 @Entity
 public class Song {
 
-        @Id
-        @GeneratedValue(generator = "id_gen")
-        @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "SO"), strategy = "fpt.swp391.utils.IdGenerator")
-        private String song_id;
+    @Id
+    @GeneratedValue(generator = "id_gen_song")
+    @GenericGenerator(name = "id_gen_song", parameters = @Parameter(name = "prefix", value = "SO"), strategy = "fpt.swp391.utils.IdGenerator")
+    private String song_id;
 
-        @Column(columnDefinition = "nvarchar(50)")
-        private String song_name;
+    @Column(columnDefinition = "nvarchar(50)")
+    private String song_name;
 
-        @ManyToMany(mappedBy = "listSong", fetch = FetchType.LAZY)
-        private List<Category> categories;
+    @ManyToMany
+    @JoinTable(name = "song_category", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+//    @JsonBackReference
+    private Set<Category> categories;
 
-        private String path;
+    private String path;
 
-        @ManyToOne
-        @JoinColumn(name = "user_added_id")
-        private User user_added;
+    @ManyToOne
+    @JsonBackReference(value = "adder")
+    private User adder;
 
-        @ManyToMany
-        @JoinTable(name = "song_artist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-        private List<Artist> artist;
+    @ManyToMany
+    @JoinTable(name = "song_artist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
+    private Set<Artist> artist;
 
-        private String song_image;
+    private String song_image;
 
-        private int song_duration;
+    private int song_duration;
 
-        private LocalDate date_added;
+    private LocalDate date_added;
 
-        private long stream_count;
+    private long stream_count;
 
-        @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(name = "song_playlist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
-        private List<Playlist> listPlaylists;
+    @ManyToMany
+    @JoinTable(name = "song_playlist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
+    @JsonBackReference
+    private Set<Playlist> listPlaylists;
 
 }

@@ -1,5 +1,6 @@
 package fpt.swp391.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,8 +20,8 @@ import java.util.List;
 public class Artist {
 
     @Id
-    @GeneratedValue(generator = "id_gen")
-    @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "ART"), strategy = "fpt.swp391.utils.IdGenerator")
+    @GeneratedValue(generator = "id_gen_artist")
+    @GenericGenerator(name = "id_gen_artist", parameters = @Parameter(name = "prefix", value = "ART"), strategy = "fpt.swp391.utils.IdGenerator")
     private String artist_id;
 
     @Column(unique = true, columnDefinition = "nvarchar(20)")
@@ -29,6 +30,7 @@ public class Artist {
     private String image;
 
     @ManyToMany(mappedBy = "artist")
-    private List<Song> listSong;
+    @JsonBackReference
+    private Set<Song> listSong = new HashSet<>();
 
 }

@@ -1,13 +1,17 @@
 package fpt.swp391.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,6 +24,7 @@ public class Role {
     @Column(length = 20)
     private String role_name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private List<Account> listAccount;
+    @OneToMany(mappedBy = "role")
+    @JsonBackReference
+    private Set<Account> listAccount = new HashSet<>();
 }

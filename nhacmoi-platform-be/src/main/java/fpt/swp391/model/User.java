@@ -1,22 +1,19 @@
 package fpt.swp391.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -24,8 +21,8 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "id_gen")
-    @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "U"), strategy = "fpt.swp391.utils.IdGenerator")
+    @GeneratedValue(generator = "id_gen_user")
+    @GenericGenerator(name = "id_gen_user", parameters = @Parameter(name = "prefix", value = "U"), strategy = "fpt.swp391.utils.IdGenerator")
     private String user_id;
 
     @Column(columnDefinition = "nvarchar(30)")
@@ -42,10 +39,12 @@ public class User {
 
     private LocalDate birthday;
 
-    @OneToMany(mappedBy = "user_added", fetch = FetchType.LAZY)
-    private List<Song> listSong;
+    @OneToMany(mappedBy = "adder")
+    @JsonBackReference(value = "adder")
+    private Set<Song> listSong;
 
-    @OneToMany(mappedBy = "user_created_id", fetch = FetchType.LAZY)
-    private List<Playlist> listPlaylist;
+    @OneToMany(mappedBy = "owner")
+    @JsonBackReference(value = "owner")
+    private Set<Playlist> listPlaylist;
 
 }

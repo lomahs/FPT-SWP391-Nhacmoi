@@ -1,15 +1,13 @@
 package fpt.swp391.config;
 
-import org.springframework.context.MessageSource;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class Config {
     @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:message");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

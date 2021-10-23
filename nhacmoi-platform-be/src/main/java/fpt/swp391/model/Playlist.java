@@ -8,8 +8,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,13 +19,12 @@ import java.util.List;
 public class Playlist {
 
     @Id
-    @GeneratedValue(generator = "id_gen")
-    @GenericGenerator(name = "id_gen", parameters = @Parameter(name = "prefix", value = "PL"), strategy = "fpt.swp391.utils.IdGenerator")
+    @GeneratedValue(generator = "id_gen_playlist")
+    @GenericGenerator(name = "id_gen_playlist", parameters = @Parameter(name = "prefix", value = "PL"), strategy = "fpt.swp391.utils.IdGenerator")
     private String playlist_id;
 
     @ManyToOne
-    @JoinColumn(name = "user_created_id")
-    private User user_created_id;
+    private User owner;
 
     @Column(columnDefinition = "nvarchar(50)")
     private String playlist_name;
@@ -34,6 +33,6 @@ public class Playlist {
 
     private String playlist_image;
 
-    @ManyToMany(mappedBy = "listPlaylists", fetch = FetchType.LAZY)
-    private List<Song> listSongs;
+    @ManyToMany(mappedBy = "listPlaylists")
+    private Set<Song> listSongs = new HashSet<>();
 }
