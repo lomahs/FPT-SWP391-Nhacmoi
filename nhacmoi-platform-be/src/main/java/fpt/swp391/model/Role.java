@@ -27,4 +27,8 @@ public class Role {
     @OneToMany(mappedBy = "role")
     @JsonBackReference
     private Set<Account> listAccount = new HashSet<>();
+
+    public Role(String role_name) {
+        this.role_name = role_name;
+    }
 }

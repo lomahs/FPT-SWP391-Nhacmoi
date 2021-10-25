@@ -70,6 +70,8 @@ public class PlaylistController {
         return playlistOptional.map(playlist -> {
             songOptional.ifPresent(playlist::removeSong);
 
+            playlistService.savePlaylist(playlist);
+
             return new ResponseEntity<>(playlist, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
@@ -84,6 +86,8 @@ public class PlaylistController {
 
         return playlistOptional.map(playlist -> {
             songOptional.ifPresent(playlist::addSong);
+
+            playlistService.savePlaylist(playlist);
 
             return new ResponseEntity<>(playlist, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

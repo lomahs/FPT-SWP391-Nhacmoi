@@ -46,4 +46,9 @@ public class Playlist {
         listSongs.remove(song);
         song.getListPlaylists().remove(this);
     }
+
+    public Playlist(String name, User owner) {
+        playlist_name = name;
+        this.owner = owner;
+    }
 }

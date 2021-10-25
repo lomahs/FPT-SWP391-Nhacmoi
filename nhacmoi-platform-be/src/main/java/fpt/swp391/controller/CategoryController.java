@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
-
+    
     @Autowired
     private ICategoryService categoryService;
 
@@ -54,6 +54,7 @@ public class CategoryController {
 
         return categoryOptional.map(cat -> {
             categoryService.deleteCategory(id);
+
             return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

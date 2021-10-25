@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PlaylistServiceImpl implements IPlaylistService {
+public class PlaylistService implements IPlaylistService {
 
     @Autowired
     PlaylistRepository playlistRepository;
@@ -48,4 +48,5 @@ public class PlaylistServiceImpl implements IPlaylistService {
         }
         return duration;
     }
+
 }

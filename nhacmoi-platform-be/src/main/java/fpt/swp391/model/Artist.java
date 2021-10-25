@@ -33,4 +33,8 @@ public class Artist {
     @JsonBackReference
     private Set<Song> listSong = new HashSet<>();
 
+    public Artist(String artist_name) {
+        this.artist_name = artist_name;
+    }
+
 }

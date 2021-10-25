@@ -10,6 +10,7 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -30,7 +31,7 @@ public class Song {
     @ManyToMany
     @JoinTable(name = "song_category", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 //    @JsonBackReference
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     private String path;
 
@@ -40,7 +41,7 @@ public class Song {
 
     @ManyToMany
     @JoinTable(name = "song_artist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private Set<Artist> artist;
+    private Set<Artist> artist = new HashSet<>();
 
     private String song_image;
 
@@ -52,6 +53,10 @@ public class Song {
 
     @ManyToMany(mappedBy = "listSongs")
     @JsonBackReference
-    private Set<Playlist> listPlaylists;
+    private Set<Playlist> listPlaylists = new HashSet<>();
 
+    public void removeCategory(Category category) {
+        categories.remove(category);
+        category.getListSong().remove(this);
+    }
 }

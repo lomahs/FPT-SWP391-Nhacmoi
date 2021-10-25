@@ -31,7 +31,7 @@ public class User {
     @Column(columnDefinition = "varchar(50)")
     private String user_email;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_name")
     private Account account;
 
@@ -43,7 +43,7 @@ public class User {
     @JsonBackReference(value = "adder")
     private Set<Song> listSong;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     @JsonBackReference(value = "owner")
     private Set<Playlist> listPlaylist;
 

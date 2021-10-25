@@ -1,12 +1,18 @@
 package fpt.swp391.controller;
 
+import fpt.swp391.model.Artist;
 import fpt.swp391.model.Song;
+import fpt.swp391.service.IArtistService;
+import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.ISongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,12 +20,14 @@ import java.util.Optional;
 @RequestMapping("/api/song")
 public class SongController {
 
-    private final ISongService songService;
+    @Autowired
+    private ISongService songService;
 
     @Autowired
-    public SongController(ISongService songService) {
-        this.songService = songService;
-    }
+    private IPlaylistService playlistService;
+
+    @Autowired
+    private IArtistService artistService;
 
     @GetMapping
     public ResponseEntity<List<Song>> getAllSongs() {
@@ -37,6 +45,21 @@ public class SongController {
 
     @PostMapping("/create")
     public ResponseEntity<Song> createSong(@RequestBody Song song) {
+        List<Artist> listArtists = new ArrayList<>();
+
+        song.getArtist().forEach(
+                artist -> {
+                    Optional<Artist> artistOptional = artistService.getArtistByName(artist.getArtist_name());
+
+                    listArtists.add(artistOptional.orElseGet(() -> {
+                        Artist a = new Artist(artist.getArtist_name());
+
+                        return artistService.saveArtist(a);
+                    }));
+                }
+        );
+
+        song.setArtist(new HashSet<>(listArtists));
 
         return new ResponseEntity<>(songService.saveSong(song), HttpStatus.CREATED);
     }
@@ -51,10 +74,12 @@ public class SongController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Transactional
     public ResponseEntity<String> deleteSong(@PathVariable("id") String id) {
         Optional<Song> songOptional = songService.getSongById(id);
 
         return songOptional.map(song -> {
+
             songService.deleteSongById(id);
             return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
