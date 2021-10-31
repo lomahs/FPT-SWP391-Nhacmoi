@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
-    
+
     @Autowired
     private ICategoryService categoryService;
 
@@ -32,13 +32,13 @@ public class CategoryController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
 
         return new ResponseEntity<>(categoryService.saveCategory(category), HttpStatus.CREATED);
     }
 
-    @PutMapping("/edit")
+    @PutMapping()
     public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
 
         Optional<Category> categoryOptional = categoryService.getCategoryById(category.getCategory_id());
@@ -47,7 +47,7 @@ public class CategoryController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable("id") String id) {
 
         Optional<Category> categoryOptional = categoryService.getCategoryById(id);

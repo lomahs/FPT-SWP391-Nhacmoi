@@ -47,7 +47,7 @@ public class SongController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Song> createSong(@RequestBody Song song) {
         List<Artist> listArtists = new ArrayList<>();
 
@@ -68,7 +68,7 @@ public class SongController {
         return new ResponseEntity<>(songService.saveSong(song), HttpStatus.CREATED);
     }
 
-    @PutMapping("/edit")
+    @PutMapping()
     public ResponseEntity<Song> updateSong(@RequestBody Song song) {
 
         Optional<Song> songOptional = songService.getSongById(song.getSong_id());
@@ -77,7 +77,7 @@ public class SongController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<String> deleteSong(@PathVariable("id") String id) {
         Optional<Song> songOptional = songService.getSongById(id);
@@ -90,20 +90,20 @@ public class SongController {
     }
 
     @GetMapping("stream/{id}")
-    public ResponseEntity<Byte[]> getStreamSong(HttpServletResponse response, @PathVariable("id") String id){
+    public ResponseEntity<Byte[]> getStreamSong(HttpServletResponse response, @PathVariable("id") String id) {
         // đường dẫn đến folder chứa file nhạc trong máy,
         // path của song ở database sẽ lưu tên bài hát.mp3, ví dụ Hello.mp3
         String url = "C:\\Users\\tuanm\\Desktop\\music\\";
         Optional<Song> songOptional = songService.getSongById(id);
         songOptional.map(song -> {
-            try{
+            try {
 
-                Path path = Paths.get(url+song.getPath());
+                Path path = Paths.get(url + song.getPath());
                 response.setContentType("audio/mpeg");
-                Files.copy(path,response.getOutputStream());
+                Files.copy(path, response.getOutputStream());
                 response.flushBuffer();
 
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
 
@@ -115,21 +115,21 @@ public class SongController {
     }
 
     @GetMapping("download/{id}")
-    public ResponseEntity<Byte[]> getDownLoadSong(HttpServletResponse response, @PathVariable("id") String id){
+    public ResponseEntity<Byte[]> getDownLoadSong(HttpServletResponse response, @PathVariable("id") String id) {
         // đường dẫn đến folder chứa file nhạc trong máy,
         // path của song ở database sẽ lưu tên bài hát.mp3, ví dụ Hello.mp3
         String url = "C:\\Users\\tuanm\\Desktop\\music\\";
         Optional<Song> songOptional = songService.getSongById(id);
         songOptional.map(song -> {
-            try{
+            try {
 
-                Path path = Paths.get(url+song.getPath());
+                Path path = Paths.get(url + song.getPath());
                 response.setContentType("audio/mpeg");
-                response.setHeader( "Content-Disposition", "attachment;filename=" + song.getPath());
-                Files.copy(path,response.getOutputStream());
+                response.setHeader("Content-Disposition", "attachment;filename=" + song.getPath());
+                Files.copy(path, response.getOutputStream());
                 response.flushBuffer();
 
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
 
             }
 
@@ -138,8 +138,6 @@ public class SongController {
 
         return null;
     }
-
-
 
 
 }

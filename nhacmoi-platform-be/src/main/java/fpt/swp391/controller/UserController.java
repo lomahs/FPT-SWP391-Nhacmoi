@@ -7,16 +7,14 @@ import fpt.swp391.model.User;
 import fpt.swp391.service.IAccountService;
 import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.IUserService;
+import fpt.swp391.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,16 +28,18 @@ public class UserController {
     @Autowired
     private IAccountService accountService;
 
+    @Autowired
+    private JwtService jwtService;
+
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<User> createUser(@RequestBody User user) {
 
         Account account = user.getAccount();
 
-
-        if (account.getRole() == null) {
-            account.setRole(new Role("user"));
-        }
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("USER"));
+        account.setRoles(roles);
 
         User newUser = userService.saveUser(user);
 
@@ -94,5 +94,25 @@ public class UserController {
                     return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
                 }
         ).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Account account) {
+        String result = "";
+        HttpStatus httpStatus = null;
+
+        try {
+            if (accountService.checkLogin(account)) {
+                result = jwtService.generateTokenLogin(account.getAccount_name());
+                httpStatus = HttpStatus.OK;
+            } else {
+                result = "Wrong AccountName or password";
+                httpStatus = HttpStatus.BAD_REQUEST;
+            }
+        } catch (Exception ex) {
+            result = "Server Error";
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(result, httpStatus);
     }
 }
