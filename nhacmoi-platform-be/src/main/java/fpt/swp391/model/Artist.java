@@ -9,6 +9,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +28,8 @@ public class Artist {
     private String artist_id;
 
     @Column(unique = true, columnDefinition = "nvarchar(20)")
+    @Size(max = 20, min = 1, message = "name must be at least 1 character, maximum 20 characters")
+    @NotBlank(message = "name is only whitespace")
     private String artist_name;
 
     private String image;

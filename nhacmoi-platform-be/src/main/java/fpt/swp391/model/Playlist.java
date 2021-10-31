@@ -8,6 +8,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,9 +28,12 @@ public class Playlist {
     private String playlist_id;
 
     @ManyToOne
+    @NotNull(message = "user is empty")
     private User owner;
 
     @Column(columnDefinition = "nvarchar(50)")
+    @Size(max = 50, min = 1, message = "name must be at least 1 character, maximum 50 characters")
+    @NotBlank(message = "name is only whitespace")
     private String playlist_name;
 
     private long playlist_duration;

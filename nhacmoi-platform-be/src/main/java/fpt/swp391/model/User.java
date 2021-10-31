@@ -9,6 +9,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -26,17 +33,24 @@ public class User {
     private String user_id;
 
     @Column(columnDefinition = "nvarchar(30)")
+    @Size(max = 30, min = 1, message = "name must be at least 1 character, maximum 30 characters")
+    @NotBlank(message = "name is only whitespace")
     private String user_name;
 
     @Column(columnDefinition = "varchar(50)")
+    @Size(max = 50, message = "maximum 50 characters")
+    @Email(message = "invalid email")
     private String user_email;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_name")
+    @NotNull(message = "account is empty")
+    @Valid
     private Account account;
 
     private char sex;
 
+    @Past(message = "date is in future")
     private LocalDate birthday;
 
     @OneToMany(mappedBy = "adder")
