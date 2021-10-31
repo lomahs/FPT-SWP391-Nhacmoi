@@ -7,10 +7,16 @@ import fpt.swp391.service.ISongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/playlist")
@@ -37,13 +43,13 @@ public class PlaylistController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Playlist> createPlaylist(@RequestBody Playlist playlist) {
+    public ResponseEntity<Playlist> createPlaylist(@Valid @RequestBody Playlist playlist) {
 
         return new ResponseEntity<>(playlistService.savePlaylist(playlist), HttpStatus.CREATED);
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<Playlist> updatePlaylist(@RequestBody Playlist playlist) {
+    public ResponseEntity<Playlist> updatePlaylist(@Valid @RequestBody Playlist playlist) {
 
         Optional<Playlist> playlistOptional = playlistService.getPlaylistById(playlist.getPlaylist_id());
 
@@ -63,7 +69,7 @@ public class PlaylistController {
 
     @GetMapping("/remove/{playlistId}/{songId}")
     public ResponseEntity<Playlist> removeSong(@PathVariable("playlistId") String playlistId,
-                                               @PathVariable("songId") String songId) {
+            @PathVariable("songId") String songId) {
         Optional<Playlist> playlistOptional = playlistService.getPlaylistById(playlistId);
         Optional<Song> songOptional = songService.getSongById(songId);
 
@@ -79,7 +85,7 @@ public class PlaylistController {
 
     @GetMapping("/add/{playlistId}/{songId}")
     public ResponseEntity<Playlist> addSong(@PathVariable("playlistId") String playlistId,
-                                            @PathVariable("songId") String songId) {
+            @PathVariable("songId") String songId) {
 
         Optional<Playlist> playlistOptional = playlistService.getPlaylistById(playlistId);
         Optional<Song> songOptional = songService.getSongById(songId);
@@ -91,6 +97,17 @@ public class PlaylistController {
 
             return new ResponseEntity<>(playlist, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

@@ -9,6 +9,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,22 +31,27 @@ public class Song {
     private String song_id;
 
     @Column(columnDefinition = "nvarchar(50)")
+    @Size(max = 50, min = 1, message = "name must be at least 1 character, maximum 50 characters")
+    @NotBlank(message = "name is only whitespace")
     private String song_name;
 
     @ManyToMany
     @JoinTable(name = "song_category", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-//    @JsonBackReference
+    // @JsonBackReference
+    @NotNull(message = "categories is empty")
     private Set<Category> categories = new HashSet<>();
 
     private String path;
 
     @ManyToOne
     @JsonBackReference(value = "adder")
+    @NotNull(message = "user is empty")
     private User adder;
 
     @ManyToMany
     @JoinTable(name = "song_artist", joinColumns = @JoinColumn(name = "song_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private Set<Artist> artist = new HashSet<>();
+    @NotNull(message = "artist is empty")
+    private Set<@Valid Artist> artist = new HashSet<>();
 
     private String song_image;
 
