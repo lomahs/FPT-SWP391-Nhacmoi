@@ -11,9 +11,12 @@ import fpt.swp391.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -31,9 +34,9 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping("/create")
+    @PostMapping
     @Transactional
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
 
         Account account = user.getAccount();
 
@@ -51,23 +54,20 @@ public class UserController {
         return new ResponseEntity<>(userService.saveUser(newUser), HttpStatus.CREATED);
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<User> changePassword(@RequestBody Map<String, String> jsonData) {
+    @PutMapping
+    public ResponseEntity<User> changePassword(@Valid @RequestBody Map<String, String> jsonData) {
 
         String userId = jsonData.get("user_id");
         String password = jsonData.get("password");
 
         Optional<User> userOptional = userService.getUserByID(userId);
 
-        return userOptional.map(
-                        user -> {
-                            user.getAccount().setPassword(password);
-                            accountService.saveAccount(user.getAccount());
-                            return new ResponseEntity<>(user, HttpStatus.OK);
-                        })
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return userOptional.map(user -> {
+            user.getAccount().setPassword(password);
+            accountService.saveAccount(user.getAccount());
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -75,7 +75,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getListUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") String id) {
         Optional<User> userOptional = userService.getUserByID(id);
 
@@ -83,17 +83,28 @@ public class UserController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") String id) {
         Optional<User> userOptional = userService.getUserByID(id);
 
-        return userOptional.map(
-                user -> {
+        return userOptional.map(user -> {
 
-                    userService.deleteUserById(id);
-                    return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
-                }
-        ).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            userService.deleteUserById(id);
+            return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
+        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        System.out.println(errors);
+        return errors;
     }
 
     @PostMapping("/login")

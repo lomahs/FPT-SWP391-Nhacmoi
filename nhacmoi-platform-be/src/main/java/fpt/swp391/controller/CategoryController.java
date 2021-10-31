@@ -32,13 +32,13 @@ public class CategoryController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
 
         return new ResponseEntity<>(categoryService.saveCategory(category), HttpStatus.CREATED);
     }
 
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
 
         Optional<Category> categoryOptional = categoryService.getCategoryById(category.getCategory_id());

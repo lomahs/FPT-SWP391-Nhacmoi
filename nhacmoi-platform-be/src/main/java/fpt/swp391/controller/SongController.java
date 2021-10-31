@@ -3,11 +3,12 @@ package fpt.swp391.controller;
 import fpt.swp391.model.Artist;
 import fpt.swp391.model.Song;
 import fpt.swp391.service.IArtistService;
-import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.ISongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,10 +16,7 @@ import javax.transaction.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/song")
@@ -26,9 +24,6 @@ public class SongController {
 
     @Autowired
     private ISongService songService;
-
-    @Autowired
-    private IPlaylistService playlistService;
 
     @Autowired
     private IArtistService artistService;
@@ -47,28 +42,26 @@ public class SongController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Song> createSong(@RequestBody Song song) {
         List<Artist> listArtists = new ArrayList<>();
 
-        song.getArtist().forEach(
-                artist -> {
-                    Optional<Artist> artistOptional = artistService.getArtistByName(artist.getArtist_name());
+        song.getArtist().forEach(artist -> {
+            Optional<Artist> artistOptional = artistService.getArtistByName(artist.getArtist_name());
 
-                    listArtists.add(artistOptional.orElseGet(() -> {
-                        Artist a = new Artist(artist.getArtist_name());
+            listArtists.add(artistOptional.orElseGet(() -> {
+                Artist a = new Artist(artist.getArtist_name());
 
-                        return artistService.saveArtist(a);
-                    }));
-                }
-        );
+                return artistService.saveArtist(a);
+            }));
+        });
 
         song.setArtist(new HashSet<>(listArtists));
 
         return new ResponseEntity<>(songService.saveSong(song), HttpStatus.CREATED);
     }
 
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<Song> updateSong(@RequestBody Song song) {
 
         Optional<Song> songOptional = songService.getSongById(song.getSong_id());
@@ -139,5 +132,15 @@ public class SongController {
         return null;
     }
 
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 }
