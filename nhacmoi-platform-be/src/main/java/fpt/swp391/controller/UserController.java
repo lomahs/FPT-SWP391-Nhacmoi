@@ -41,7 +41,7 @@ public class UserController {
         Account account = user.getAccount();
 
         Set<Role> roles = new HashSet<>();
-        roles.add(new Role("USER"));
+        roles.add(new Role("ROLE_USER"));
         account.setRoles(roles);
 
         User newUser = userService.saveUser(user);

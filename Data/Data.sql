@@ -10,22 +10,23 @@ INSERT INTO category VALUES ('CAT0007','Party')
 
 -- Role
 -- DELETE FROM role
-INSERT INTO [role] VALUES ('admin')
-INSERT INTO [role] VALUES ('moderator')
-INSERT INTO [role] VALUES ('member')
+INSERT INTO [role] VALUES ('USER')
+INSERT INTO [role] VALUES ('MODERATOR')
+INSERT INTO [role] VALUES ('ADMIN')
+SELECT * FROM role
 
 
 -- Account
 -- DELETE FROM account
-INSERT INTO account VALUES ('bao','123','admin')
-INSERT INTO account VALUES ('huy','123','admin')
-INSERT INTO account VALUES ('khanh','123','admin')
-INSERT INTO account VALUES ('loi','123','admin')
-INSERT INTO account VALUES ('dat','123','admin')
-INSERT INTO account VALUES ('minh','123','admin')
-INSERT INTO account VALUES ('khue','123','admin')
-INSERT INTO account VALUES ('noname','123','moderator')
-INSERT INTO account VALUES ('nguoiyeudatker','123','member')
+INSERT INTO account VALUES ('bao','123')
+INSERT INTO account VALUES ('huy','123')
+INSERT INTO account VALUES ('khanh','123')
+INSERT INTO account VALUES ('loi','123')
+INSERT INTO account VALUES ('dat','123')
+INSERT INTO account VALUES ('minh','123')
+INSERT INTO account VALUES ('khue','123')
+INSERT INTO account VALUES ('noname','123')
+INSERT INTO account VALUES ('nguoiyeudatker','123')
 
 -- User
 -- DELETE FROM [user]
@@ -61,15 +62,15 @@ INSERT INTO song VALUES ('SO0008',null,null,2000,null,'Em gái mưa',2400,'U0009
 INSERT INTO song VALUES ('SO0009',null,null,12200,null,'Rời bỏ',500,'U0004')
 
 --Song & Category
-INSERT INTO song_category VALUES ('CAT0004','SO0001')
-INSERT INTO song_category VALUES ('CAT0003','SO0002')
-INSERT INTO song_category VALUES ('CAT0005','SO0003')
-INSERT INTO song_category VALUES ('CAT0006','SO0004')
-INSERT INTO song_category VALUES ('CAT0007','SO0005')
-INSERT INTO song_category VALUES ('CAT0001','SO0006')
-INSERT INTO song_category VALUES ('CAT0002','SO0007')
-INSERT INTO song_category VALUES ('CAT0003','SO0008')
-INSERT INTO song_category VALUES ('CAT0002','SO0009')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0004','SO0001')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0003','SO0002')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0005','SO0003')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0006','SO0004')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0007','SO0005')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0001','SO0006')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0002','SO0007')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0003','SO0008')
+INSERT INTO song_category(category_id,song_id) VALUES ('CAT0002','SO0009')
 
 --Song & Artist
 INSERT INTO song_artist VALUES ('SO0001','ART0001')
@@ -83,7 +84,7 @@ INSERT INTO song_artist VALUES ('SO0008','ART0003')
 INSERT INTO song_artist VALUES ('SO0009','ART0004')
 
 --Playlist
-INSERT INTO playlist VALUES ('PL0001',2000,'abc','Test playlist','U0001')
+INSERT INTO playlist VALUES ('PL0003',2000,'abc','Test playlist','U0001')
 
 
 DELETE FROM song WHERE song_id = 'SO0007'
@@ -91,12 +92,24 @@ SELECT * FROM song
 -- SELECT * FROM category
 SELECT * FROM song_category
 SELECT * FROM song_artist
-SELECT * FROM song_playlist
+SELECT * FROM playlist_song
 SELECT * FROM [user]
 INSERT INTO song_category VALUES ('CAT0004','SO0001')
+
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0001')
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0002')
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0003')
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0004')
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0005')
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0006')
+INSERT INTO playlist_song(playlist_id,song_id) VALUES ('PL0003','SO0007')
 
 
 CREATE DATABASE nhacmoi
 DROP DATABASE nhacmoi
 SELECT * FROM song_category
 SELECT * FROM account
+
+SELECT song_id FROM playlist_song WHERE playlist_id = 'PL0003'
+SELECT * FROM song WHERE song_name LIKE '%e%' AND song_id IN (SELECT song_id FROM playlist_song WHERE playlist_id = 'PL0003')
+SELECT * FROM song WHERE song_name LIKE '%e%'
