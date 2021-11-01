@@ -1,8 +1,6 @@
 package fpt.swp391.controller;
 
 import fpt.swp391.model.Account;
-import fpt.swp391.model.Playlist;
-import fpt.swp391.model.Role;
 import fpt.swp391.model.User;
 import fpt.swp391.service.IAccountService;
 import fpt.swp391.service.IPlaylistService;
@@ -11,13 +9,16 @@ import fpt.swp391.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
@@ -34,39 +35,31 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping
-    @Transactional
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/register")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
 
-        Account account = user.getAccount();
-
-        Set<Role> roles = new HashSet<>();
-        roles.add(new Role("USER"));
-        account.setRoles(roles);
-
-        User newUser = userService.saveUser(user);
-
-        Playlist playlist = playlistService.savePlaylist(new Playlist("Liked Song", newUser));
-
-        newUser.setListPlaylist(new HashSet<>());
-        newUser.getListPlaylist().add(playlist);
-
-        return new ResponseEntity<>(userService.saveUser(newUser), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.registerNewUser(user), HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<User> changePassword(@Valid @RequestBody Map<String, String> jsonData) {
 
+        User user = userService.changePassword(jsonData);
+
+        return user != null ? new ResponseEntity<>(user, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @PutMapping("/changeRole")
+    public ResponseEntity<User> changeRole(@Valid @RequestBody Map<String, String> jsonData) {
         String userId = jsonData.get("user_id");
-        String password = jsonData.get("password");
+        String role = jsonData.get("role");
 
-        Optional<User> userOptional = userService.getUserByID(userId);
+        User user = userService.changeRole(userService.getUserByID(userId), role);
 
-        return userOptional.map(user -> {
-            user.getAccount().setPassword(password);
-            accountService.saveAccount(user.getAccount());
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return user != null ? new ResponseEntity<>(user, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @GetMapping

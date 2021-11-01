@@ -1,7 +1,5 @@
 package fpt.swp391;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import fpt.swp391.model.Account;
 import fpt.swp391.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
@@ -10,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.Rollback;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -25,7 +25,7 @@ public class AccountRepositoryTest {
     public void testFindUserByEmail() {
         String accountName = "loi";
 
-        Account user = repo.findByAccountName(accountName);
+        Account user = repo.findByAccountName(accountName).orElse(null);
 
         assertThat(user).isNotNull();
     }

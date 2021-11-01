@@ -4,6 +4,7 @@ import fpt.swp391.model.Account;
 import fpt.swp391.repository.AccountRepository;
 import fpt.swp391.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,6 +14,9 @@ public class AccountService implements IAccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Account saveAccount(Account account) {
@@ -40,7 +44,7 @@ public class AccountService implements IAccountService {
     public boolean checkLogin(Account account) {
         Optional<Account> accountOptional = accountRepository.findByAccountName(account.getAccount_name());
 
-        return accountOptional.map(acc -> acc.getPassword().equals(account.getPassword()))
+        return accountOptional.map(acc -> passwordEncoder.matches(account.getPassword(), acc.getPassword()))
                 .orElse(false);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,7 +44,7 @@ public class SongController {
     }
 
     @PostMapping
-    public ResponseEntity<Song> createSong(@RequestBody Song song) {
+    public ResponseEntity<Song> createSong(@Valid @RequestBody Song song) {
         List<Artist> listArtists = new ArrayList<>();
 
         song.getArtist().forEach(artist -> {
@@ -62,7 +63,7 @@ public class SongController {
     }
 
     @PutMapping
-    public ResponseEntity<Song> updateSong(@RequestBody Song song) {
+    public ResponseEntity<Song> updateSong(@Valid @RequestBody Song song) {
 
         Optional<Song> songOptional = songService.getSongById(song.getSong_id());
 

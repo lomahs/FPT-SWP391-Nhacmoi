@@ -14,8 +14,8 @@ public class CustomAccountDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
-        Account account = accountService.findByAccountName(accountName);
-        if(account == null){
+        Account account = accountService.findByAccountName(accountName).orElse(null);
+        if (account == null) {
             throw new UsernameNotFoundException("Account not found");
         }
         return new CustomAccountDetails(account);
