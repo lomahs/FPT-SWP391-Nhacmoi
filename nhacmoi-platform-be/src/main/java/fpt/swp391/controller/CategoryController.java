@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
@@ -33,13 +35,13 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
 
         return new ResponseEntity<>(categoryService.saveCategory(category), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
+    public ResponseEntity<Category> updateCategory(@Valid @RequestBody Category category) {
 
         Optional<Category> categoryOptional = categoryService.getCategoryById(category.getCategory_id());
 

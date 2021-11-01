@@ -37,25 +37,31 @@ public class SongService implements ISongService {
 
         Optional<Song> songOptional = getSongById(id);
         Set<Playlist> listPlaylists = new HashSet<>();
+        songOptional.ifPresent(song -> {
+            listPlaylists.addAll(song.getListPlaylists());
+            listPlaylists.forEach(playlist -> {
+                playlist.removeSong(song);
 
-        songOptional.ifPresent(
-                song -> {
-                    listPlaylists.addAll(song.getListPlaylists());
-                    listPlaylists.forEach(
-                            playlist -> {
-                                playlist.removeSong(song);
-
-                                playlistService.savePlaylist(playlist);
-                            }
-                    );
-                    songRepository.deleteById(id);
-                }
-        );
+                playlistService.savePlaylist(playlist);
+            });
+            songRepository.deleteById(id);
+        });
 
     }
 
     @Override
     public List<Song> getListSongs() {
         return songRepository.findAll();
+    }
+
+    @Override
+    public List<Song> searchSongByName(String name) {
+
+        return (List<Song>) songRepository.findBySongName(name);
+    }
+
+    @Override
+    public List<Song> searchSongByNameAndPlaylistId(String name, String id) {
+        return (List<Song>) songRepository.findBySongNameAndPlaylistId(name, id);
     }
 }
