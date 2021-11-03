@@ -1,5 +1,6 @@
 package fpt.swp391.service.impl;
 import fpt.swp391.model.Account;
+import fpt.swp391.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -7,7 +8,8 @@ import java.util.Collection;
 
 public class CustomAccountDetails implements UserDetails{
 
-    private Account account;
+    private final Account account;
+    private User user;
 
     public CustomAccountDetails(Account account) {
         this.account = account;
@@ -35,7 +37,7 @@ public class CustomAccountDetails implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !user.getLocked();
     }
 
     @Override
@@ -45,6 +47,6 @@ public class CustomAccountDetails implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getEnabled();
     }
 }

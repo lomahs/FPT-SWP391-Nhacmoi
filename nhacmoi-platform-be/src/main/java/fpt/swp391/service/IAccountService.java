@@ -9,5 +9,5 @@ public interface IAccountService {
 
     Account loadUserByAccountName(String accountName);
 
-    boolean checkLogin(Account account);
+    boolean checkLogin(Account account) throws Exception;
 }

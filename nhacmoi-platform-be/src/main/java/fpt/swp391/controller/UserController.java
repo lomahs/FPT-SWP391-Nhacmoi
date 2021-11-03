@@ -7,6 +7,8 @@ import fpt.swp391.service.IAccountService;
 import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.IUserService;
 import fpt.swp391.service.JwtService;
+import fpt.swp391.service.impl.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
+
+    private final UserService userServices;
+
     @Autowired
     private IUserService userService;
 
@@ -119,9 +125,14 @@ public class UserController {
                 httpStatus = HttpStatus.BAD_REQUEST;
             }
         } catch (Exception ex) {
-            loginResponse = new LoginResponse(null, null, "Server Error");
+            loginResponse = new LoginResponse(null, null, "User email is not confirmed.");
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<>(loginResponse, httpStatus);
+    }
+
+    @GetMapping(path = "/register/confirm")
+    public String confirm(@RequestParam("token") String token){
+        return userServices.confirmToken(token);
     }
 }

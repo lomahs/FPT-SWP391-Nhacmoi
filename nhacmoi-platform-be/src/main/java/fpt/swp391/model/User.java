@@ -50,6 +50,9 @@ public class User {
     
     private String user_image;
 
+    private Boolean locked = false;
+    private Boolean enabled = false;
+
     @OneToMany(mappedBy = "adder")
     @JsonBackReference(value = "adder")
     private Set<Song> listSong;

@@ -55,6 +55,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                //
+                .antMatchers("/api/user/register/**").permitAll()
                 //list ALl songs and specific song
                 .antMatchers(HttpMethod.GET, "/api/song/*").permitAll()
                 //stream song
