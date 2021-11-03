@@ -1,6 +1,7 @@
 package fpt.swp391.controller;
 
 import fpt.swp391.model.Account;
+import fpt.swp391.model.LoginResponse;
 import fpt.swp391.model.User;
 import fpt.swp391.service.IAccountService;
 import fpt.swp391.service.IPlaylistService;
@@ -101,22 +102,26 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Account account) {
-        String result = "";
+    public ResponseEntity<LoginResponse> login(@RequestBody Account account) {
+        String token = "";
         HttpStatus httpStatus = null;
+        LoginResponse loginResponse;
 
         try {
             if (accountService.checkLogin(account)) {
-                result = jwtService.generateTokenLogin(account.getAccount_name());
+                token = jwtService.generateTokenLogin(account.getAccount_name());
+                User user = userService.getUserByAccountName(account.getAccount_name());
+
+                loginResponse = new LoginResponse(user, token, "Login Successful");
                 httpStatus = HttpStatus.OK;
             } else {
-                result = "Wrong AccountName or password";
+                loginResponse = new LoginResponse(null, null, "Wrong AccountName or Password");
                 httpStatus = HttpStatus.BAD_REQUEST;
             }
         } catch (Exception ex) {
-            result = "Server Error";
+            loginResponse = new LoginResponse(null, null, "Server Error");
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(result, httpStatus);
+        return new ResponseEntity<>(loginResponse, httpStatus);
     }
 }

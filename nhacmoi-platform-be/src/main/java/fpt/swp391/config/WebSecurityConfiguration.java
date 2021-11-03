@@ -67,11 +67,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //login and sign up
                 .antMatchers("/api/user/register").permitAll()
                 .antMatchers("/api/user/login").permitAll()
-                //get all users, delete user
-                .antMatchers("/api/user/**").access("hasAnyRole('ROLE_MODERATOR','ROLE_ADMIN')")
                 //get user by id, edit user
                 .antMatchers(HttpMethod.GET, "/api/user/*").access("hasAnyRole('ROLE_USER', 'ROLE_MODERATOR','ROLE_ADMIN')")
                 .antMatchers(HttpMethod.PUT, "/api/user").access("hasAnyRole('ROLE_USER', 'ROLE_MODERATOR','ROLE_ADMIN')")
+                //get all users, delete user
+                .antMatchers("/api/user/**").access("hasAnyRole('ROLE_MODERATOR','ROLE_ADMIN')")
                 //change user role
                 .antMatchers(HttpMethod.PUT, "/api/user/changeRole").access("hasRole('ROLE_ADMIN')")
                 //crud category

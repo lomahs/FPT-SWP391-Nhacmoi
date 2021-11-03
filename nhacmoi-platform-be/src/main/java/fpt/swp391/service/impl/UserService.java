@@ -36,6 +36,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public User getUserByAccountName(String name) {
+        return userRepository.getUserByAccountName(name);
+    }
+
+    @Override
     public void deleteUserById(String id) {
         Optional<User> userOptional = getUserByID(id);
 

@@ -20,4 +20,6 @@ public interface IUserService {
     User changePassword(Map<String, String> jsonData);
 
     User changeRole(Optional<User> userOptional, String role);
+
+    User getUserByAccountName(String name);
 }

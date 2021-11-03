@@ -47,6 +47,8 @@ public class User {
 
     @Past(message = "date is in future")
     private LocalDate birthday;
+    
+    private String user_image;
 
     @OneToMany(mappedBy = "adder")
     @JsonBackReference(value = "adder")
