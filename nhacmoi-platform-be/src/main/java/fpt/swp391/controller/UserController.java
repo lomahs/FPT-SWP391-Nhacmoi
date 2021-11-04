@@ -132,7 +132,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/register/confirm")
-    public String confirm(@RequestParam("token") String token){
+    public ResponseEntity<LoginResponse> confirm(@RequestParam("token") String token){
         return userServices.confirmToken(token);
     }
 }

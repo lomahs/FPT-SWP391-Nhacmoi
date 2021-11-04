@@ -3,16 +3,15 @@ package fpt.swp391.service.impl;
 import fpt.swp391.email.EmailSender;
 import fpt.swp391.email.token.ConfirmationToken;
 import fpt.swp391.email.token.ConfirmationTokenService;
-import fpt.swp391.model.Playlist;
-import fpt.swp391.model.Role;
-import fpt.swp391.model.Song;
-import fpt.swp391.model.User;
+import fpt.swp391.model.*;
 import fpt.swp391.repository.UserRepository;
 import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.ISongService;
 import fpt.swp391.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,7 +121,8 @@ public class UserService implements IUserService {
     }
 
     @Transactional
-    public String confirmToken(String token) {
+    public ResponseEntity<LoginResponse> confirmToken(String token) {
+        LoginResponse loginResponse;
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() ->
                         new IllegalStateException("token not found"));
@@ -140,7 +140,7 @@ public class UserService implements IUserService {
         userRepository.enabledAppUser(
                 confirmationToken.getUser().getUser_email()
         );
-        return "confirmed";
+        return new ResponseEntity<>(new LoginResponse(confirmationToken.getUser(), null, "User email confirm successful."), HttpStatus.OK);
     }
 
     public String buildEmail(String name, String link) {
