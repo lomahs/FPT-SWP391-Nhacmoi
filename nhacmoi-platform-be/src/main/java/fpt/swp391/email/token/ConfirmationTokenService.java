@@ -20,9 +20,14 @@ public class ConfirmationTokenService {
         return confirmationTokenRepository.findByToken(token);
     }
 
+    public Optional<ConfirmationToken> getResetPasswordToken(String token){
+        return confirmationTokenRepository.findByResetPasswordToken(token);
+    }
+
     public int setConfirmAt(String token) {
         return confirmationTokenRepository.updateConfirmAt(
                 token, LocalDateTime.now()
         );
     }
+
 }

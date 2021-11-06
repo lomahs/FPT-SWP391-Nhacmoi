@@ -16,8 +16,10 @@ public class ConfirmationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
     private String token;
+
+    private String resetPasswordToken;
 
     @Column(nullable = false)
     private LocalDateTime createAt;
@@ -34,10 +36,13 @@ public class ConfirmationToken {
     )
     private User user;
 
-    public ConfirmationToken(String token, LocalDateTime createAt, LocalDateTime expiresAt, User user) {
+    public ConfirmationToken(String token, String resetPasswordToken, LocalDateTime createAt, LocalDateTime expiresAt, User user) {
         this.token = token;
+        this.resetPasswordToken = resetPasswordToken;
         this.createAt = createAt;
         this.expiresAt = expiresAt;
         this.user = user;
     }
+
+
 }

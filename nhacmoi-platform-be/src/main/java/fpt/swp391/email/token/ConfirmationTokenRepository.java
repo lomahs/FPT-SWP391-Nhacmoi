@@ -14,6 +14,8 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     Optional<ConfirmationToken> findByToken(String token);
 
+    Optional<ConfirmationToken> findByResetPasswordToken(String token);
+
     @Transactional
     @Modifying
     @Query("UPDATE ConfirmationToken c " +

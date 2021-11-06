@@ -4,6 +4,7 @@ import fpt.swp391.email.EmailSender;
 import fpt.swp391.email.token.ConfirmationToken;
 import fpt.swp391.email.token.ConfirmationTokenService;
 import fpt.swp391.model.*;
+import fpt.swp391.repository.AccountRepository;
 import fpt.swp391.repository.UserRepository;
 import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.ISongService;
@@ -27,16 +28,14 @@ public class UserService implements IUserService {
 
     private final ConfirmationTokenService confirmationTokenService;
 
-    @Autowired
+    private final AccountRepository accountRepository;
+
     private UserRepository userRepository;
 
-    @Autowired
     private IPlaylistService playlistService;
 
-    @Autowired
     private ISongService songService;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -102,6 +101,7 @@ public class UserService implements IUserService {
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
+                "",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(5),
                 user
@@ -109,7 +109,7 @@ public class UserService implements IUserService {
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         String link = "http://localhost:8080/api/user/register/confirm?token=" + token;
-        emailSender.send(user.getUser_email(), buildEmail(user.getUser_name(), link));
+        emailSender.send(user.getUser_email(), EmailConfirm(user.getUser_name(), link));
 
 
         Playlist playlist = playlistService.savePlaylist(new Playlist("Liked Song", newUser));
@@ -122,7 +122,6 @@ public class UserService implements IUserService {
 
     @Transactional
     public ResponseEntity<LoginResponse> confirmToken(String token) {
-        LoginResponse loginResponse;
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() ->
                         new IllegalStateException("token not found"));
@@ -143,7 +142,7 @@ public class UserService implements IUserService {
         return new ResponseEntity<>(new LoginResponse(confirmationToken.getUser(), null, "User email confirm successful."), HttpStatus.OK);
     }
 
-    public String buildEmail(String name, String link) {
+    public String EmailConfirm(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
@@ -212,6 +211,74 @@ public class UserService implements IUserService {
                 "</div></div>";
     }
 
+    public String EmailForgot(String name, String link) {
+        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
+                "\n" +
+                "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
+                "\n" +
+                "  <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;min-width:100%;width:100%!important\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
+                "    <tbody><tr>\n" +
+                "      <td width=\"100%\" height=\"53\" bgcolor=\"#0b0c0c\">\n" +
+                "        \n" +
+                "        <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;max-width:580px\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n" +
+                "          <tbody><tr>\n" +
+                "            <td width=\"70\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
+                "                <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
+                "                  <tbody><tr>\n" +
+                "                    <td style=\"padding-left:10px\">\n" +
+                "                  \n" +
+                "                    </td>\n" +
+                "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
+                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Reset Password</span>\n" +
+                "                    </td>\n" +
+                "                  </tr>\n" +
+                "                </tbody></table>\n" +
+                "              </a>\n" +
+                "            </td>\n" +
+                "          </tr>\n" +
+                "        </tbody></table>\n" +
+                "        \n" +
+                "      </td>\n" +
+                "    </tr>\n" +
+                "  </tbody></table>\n" +
+                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
+                "    <tbody><tr>\n" +
+                "      <td width=\"10\" height=\"10\" valign=\"middle\"></td>\n" +
+                "      <td>\n" +
+                "        \n" +
+                "                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
+                "                  <tbody><tr>\n" +
+                "                    <td bgcolor=\"#1D70B8\" width=\"100%\" height=\"10\"></td>\n" +
+                "                  </tr>\n" +
+                "                </tbody></table>\n" +
+                "        \n" +
+                "      </td>\n" +
+                "      <td width=\"10\" valign=\"middle\" height=\"10\"></td>\n" +
+                "    </tr>\n" +
+                "  </tbody></table>\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
+                "    <tbody><tr>\n" +
+                "      <td height=\"30\"><br></td>\n" +
+                "    </tr>\n" +
+                "    <tr>\n" +
+                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
+                "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
+                "        \n" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> A request has been received to reset password. Please click reset password below to rest your pass. </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Reset Password</a> </p></blockquote>\n Link will expire in 5 minutes. <p>See you soon</p>  <p>NhacMoi.</p>" +
+                "        \n" +
+                "      </td>\n" +
+                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
+                "    </tr>\n" +
+                "    <tr>\n" +
+                "      <td height=\"30\"><br></td>\n" +
+                "    </tr>\n" +
+                "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
+                "\n" +
+                "</div></div>";
+    }
 
     @Override
     public User changeRole(Optional<User> userOptional, String role) {
@@ -242,7 +309,57 @@ public class UserService implements IUserService {
         }).orElse(null);
     }
 
-    public int enableAppUser(String email) {
-        return userRepository.enabledAppUser(email);
+    @Transactional
+    public ResponseEntity<LoginResponse> confirmResetPassword(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenService.getResetPasswordToken(token)
+                .orElseThrow(() ->
+                        new IllegalStateException("token not found"));
+
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+        if(confirmationToken.getConfirmedAt() != null){
+            throw new IllegalStateException("email already confirmed");
+        }
+
+        if(expiredAt.isBefore(LocalDateTime.now())){
+            throw new IllegalStateException("token expired");
+        }
+        return new ResponseEntity<>(new LoginResponse(confirmationToken.getUser(), token, "Allow user change pass."), HttpStatus.OK);
+    }
+
+    public String createToken(){
+        return UUID.randomUUID().toString();
+    }
+
+    public void forgotPassword(String email){
+        User user = userRepository.getUserByEmail(email);
+        String resetPassword_token = createToken();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                "",
+                resetPassword_token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(5),
+                user
+        );
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        String link = "http://localhost:8080/api/user/forgot/confirm?token=" + resetPassword_token;
+        emailSender.send(user.getUser_email(), EmailForgot(user.getUser_name(), link));
+    }
+
+    public ResponseEntity<LoginResponse> updatePassword(String email, String passWord, String token){
+        ConfirmationToken confirmationToken = confirmationTokenService.getResetPasswordToken(token)
+                .orElseThrow(() ->
+                        new IllegalStateException("token not found"));
+        Account account = accountRepository.getAccountByEmail(email);
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+        String passRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–{}:;',?/*~$^+=<>]).{8,}$";
+        if(account != null && passWord.matches(passRegex) && !expiredAt.isBefore(LocalDateTime.now())){
+            account.setPassword(passwordEncoder.encode(passWord));
+            accountRepository.save(account);
+        } else {
+            throw new IllegalStateException("Something went wrong!");
+        }
+        return new ResponseEntity<>(new LoginResponse(null, null, "User update password successful."), HttpStatus.OK);
     }
 }

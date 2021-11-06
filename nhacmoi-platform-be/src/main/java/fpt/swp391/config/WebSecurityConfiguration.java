@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -57,6 +58,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //
                 .antMatchers("/api/user/register/**").permitAll()
+                //Forgot password
+                .antMatchers("/api/user/forgot").permitAll()
+                .antMatchers("/api/user/forgot/**").permitAll()
                 //list ALl songs and specific song
                 .antMatchers(HttpMethod.GET, "/api/song/*").permitAll()
                 //stream song
