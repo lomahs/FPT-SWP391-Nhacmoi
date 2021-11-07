@@ -120,19 +120,25 @@ public class UserController {
         return new ResponseEntity<>(loginResponse, httpStatus);
     }
 
+    @GetMapping("/get")
+    public ResponseEntity<User> getUserInfo(@RequestHeader("Authorization") String token) {
+
+        return new ResponseEntity<>(userService.getUserByAccountName(jwtService.getAccountNameFromToken(token)), HttpStatus.OK);
+    }
+
     @GetMapping(path = "/register/confirm")
-    public ResponseEntity<LoginResponse> confirm(@RequestParam("token") String token){
+    public ResponseEntity<LoginResponse> confirm(@RequestParam("token") String token) {
         return userServices.confirmToken(token);
     }
 
     @PostMapping("/forgot")
-    public ResponseEntity<EmailResponse> resetPassword(@RequestBody EmailResponse emailResponse){
+    public ResponseEntity<EmailResponse> resetPassword(@RequestBody EmailResponse emailResponse) {
         HttpStatus httpStatus;
         try {
             userServices.forgotPassword(emailResponse.getEmail());
             emailResponse = new EmailResponse(emailResponse.getEmail(), null, "", "Send mail reset pass success!");
             httpStatus = HttpStatus.OK;
-        } catch (Exception e){
+        } catch (Exception e) {
             emailResponse = new EmailResponse(emailResponse.getEmail(), null, "", "Failed to send email!");
             httpStatus = HttpStatus.BAD_REQUEST;
         }
@@ -140,12 +146,12 @@ public class UserController {
     }
 
     @GetMapping(path = "/forgot/confirm")
-    public ResponseEntity<LoginResponse> confirmResetPass(@RequestParam("token") String token){
+    public ResponseEntity<LoginResponse> confirmResetPass(@RequestParam("token") String token) {
         return userServices.confirmResetPassword(token);
     }
 
     @PostMapping(path = "/forgot/changePassword")
-    public ResponseEntity<LoginResponse> changePass(@RequestBody EmailResponse emailResponse){
+    public ResponseEntity<LoginResponse> changePass(@RequestBody EmailResponse emailResponse) {
         return userServices.updatePassword(emailResponse.getEmail(), emailResponse.getPassword(), emailResponse.getToken());
     }
 }

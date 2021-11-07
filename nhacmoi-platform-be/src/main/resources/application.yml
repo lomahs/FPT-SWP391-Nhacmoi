@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     username: sa
-    password: 123456
+    password: sqlServer123
     url: jdbc:sqlserver://localhost:1433;databaseName=nhacmoi
   jpa:
     hibernate:
@@ -15,7 +15,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect
         format_sql: true
-    show-sql: true
+    show-sql: off
 
   mail:
     host: localhost
