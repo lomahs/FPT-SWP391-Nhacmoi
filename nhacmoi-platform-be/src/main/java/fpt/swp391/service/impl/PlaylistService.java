@@ -49,4 +49,9 @@ public class PlaylistService implements IPlaylistService {
         return duration;
     }
 
+    @Override
+    public List<Playlist> getListPlaylistsOfUser(String accountName) {
+        return playlistRepository.getPlaylistByAccountName(accountName);
+    }
+
 }

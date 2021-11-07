@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -92,7 +91,7 @@ public class SongController {
         Optional<Song> songOptional = songService.getSongById(id);
         songOptional.map(song -> {
             try {
-
+                song.setStream_count(song.getStream_count() + 1);
                 Path path = Paths.get(url + song.getPath());
                 response.setContentType("audio/mpeg");
                 Files.copy(path, response.getOutputStream());
@@ -141,7 +140,7 @@ public class SongController {
 
     @GetMapping("/search/{name}/{id}")
     public ResponseEntity<List<Song>> searchSongByName(@PathVariable("name") String name,
-            @PathVariable("id") String id) {
+                                                       @PathVariable("id") String id) {
         return new ResponseEntity<>(songService.searchSongByNameAndPlaylistId(name, id), HttpStatus.OK);
     }
 

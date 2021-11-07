@@ -19,4 +19,6 @@ public interface IPlaylistService {
 
     public int calculateDuration(Playlist playlist);
 
+    List<Playlist> getListPlaylistsOfUser(String id);
+
 }

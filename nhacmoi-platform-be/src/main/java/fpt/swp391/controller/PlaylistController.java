@@ -1,9 +1,12 @@
 package fpt.swp391.controller;
 
+import fpt.swp391.model.Account;
 import fpt.swp391.model.Playlist;
 import fpt.swp391.model.Song;
+import fpt.swp391.service.IAccountService;
 import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.ISongService;
+import fpt.swp391.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +30,21 @@ public class PlaylistController {
     @Autowired
     private ISongService songService;
 
-    @GetMapping
-    public ResponseEntity<List<Playlist>> getAllPlaylists() {
+    @Autowired
+    private JwtService jwtService;
 
-        return new ResponseEntity<>(playlistService.getListPlaylists(), HttpStatus.OK);
+    @Autowired
+    private IAccountService accountService;
+
+    @GetMapping
+    public ResponseEntity<List<Playlist>> getAllPlaylists(@RequestHeader(value = "Authorization", required = false) String token) {
+
+        if (token == null) {
+            return new ResponseEntity<>(playlistService.getListPlaylistsOfUser("ADMIN"), HttpStatus.OK);
+        }
+        Account account = accountService.loadUserByAccountName(jwtService.getAccountNameFromToken(token));
+
+        return new ResponseEntity<>(playlistService.getListPlaylistsOfUser(account.getAccount_name()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -48,11 +62,14 @@ public class PlaylistController {
     }
 
     @PutMapping
-    public ResponseEntity<Playlist> updatePlaylist(@Valid @RequestBody Playlist playlist) {
+    public ResponseEntity<Playlist> updatePlaylist(@RequestBody Playlist playlist) {
 
         Optional<Playlist> playlistOptional = playlistService.getPlaylistById(playlist.getPlaylist_id());
 
-        return playlistOptional.map(s -> new ResponseEntity<>(playlistService.savePlaylist(playlist), HttpStatus.OK))
+        return playlistOptional.map(s -> {
+                    s.setPlaylist_name(playlist.getPlaylist_name());
+                    return new ResponseEntity<>(playlistService.savePlaylist(s), HttpStatus.OK);
+                })
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
