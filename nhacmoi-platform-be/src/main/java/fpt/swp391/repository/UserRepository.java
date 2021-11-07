@@ -11,6 +11,12 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "select u from User as u where u.account.account_name = :accountName")
     User getUserByAccountName(String accountName);
 
-    @Query(value = "select u.account from User as u where u.user_email = :email")
-    User getAccountByEmail(String email);
+    @Transactional
+    @Modifying
+    @Query("UPDATE User a " +
+            "set a.enabled = true where a.user_email = ?1")
+    int enabledAppUser(String email);
+
+    @Query(value = "select u from User as u where u.user_email = :email")
+    User getUserByEmail(String email);
 }

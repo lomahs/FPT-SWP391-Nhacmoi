@@ -18,6 +18,9 @@ public class AccountService implements IAccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public Account saveAccount(Account account) {
 
@@ -41,9 +44,11 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public boolean checkLogin(Account account) {
+    public boolean checkLogin(Account account) throws Exception {
         Optional<Account> accountOptional = accountRepository.findByAccountName(account.getAccount_name());
-
+        if(!userService.getUserByAccountName(account.getAccount_name()).getEnabled()){
+            throw new Exception();
+        }
         return accountOptional.map(acc -> passwordEncoder.matches(account.getPassword(), acc.getPassword()))
                 .orElse(false);
     }

@@ -1,16 +1,16 @@
 package fpt.swp391.controller;
 
 import fpt.swp391.model.Account;
+import fpt.swp391.model.EmailResponse;
 import fpt.swp391.model.LoginResponse;
 import fpt.swp391.model.User;
 import fpt.swp391.service.IAccountService;
-import fpt.swp391.service.IPlaylistService;
 import fpt.swp391.service.IUserService;
 import fpt.swp391.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+import fpt.swp391.service.impl.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -22,22 +22,17 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
-    @Autowired
+
+    private final UserService userServices;
+
     private IUserService userService;
 
-    @Autowired
-    private IPlaylistService playlistService;
-
-    @Autowired
     private IAccountService accountService;
 
-    @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
@@ -103,8 +98,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody Account account) {
-        String token = "";
-        HttpStatus httpStatus = null;
+        String token;
+        HttpStatus httpStatus;
         LoginResponse loginResponse;
 
         try {
@@ -119,9 +114,38 @@ public class UserController {
                 httpStatus = HttpStatus.BAD_REQUEST;
             }
         } catch (Exception ex) {
-            loginResponse = new LoginResponse(null, null, "Server Error");
+            loginResponse = new LoginResponse(null, null, "User email is not confirmed.");
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<>(loginResponse, httpStatus);
+    }
+
+    @GetMapping(path = "/register/confirm")
+    public ResponseEntity<LoginResponse> confirm(@RequestParam("token") String token){
+        return userServices.confirmToken(token);
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity<EmailResponse> resetPassword(@RequestBody EmailResponse emailResponse){
+        HttpStatus httpStatus;
+        try {
+            userServices.forgotPassword(emailResponse.getEmail());
+            emailResponse = new EmailResponse(emailResponse.getEmail(), null, "", "Send mail reset pass success!");
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e){
+            emailResponse = new EmailResponse(emailResponse.getEmail(), null, "", "Failed to send email!");
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(emailResponse, httpStatus);
+    }
+
+    @GetMapping(path = "/forgot/confirm")
+    public ResponseEntity<LoginResponse> confirmResetPass(@RequestParam("token") String token){
+        return userServices.confirmResetPassword(token);
+    }
+
+    @PostMapping(path = "/forgot/changePassword")
+    public ResponseEntity<LoginResponse> changePass(@RequestBody EmailResponse emailResponse){
+        return userServices.updatePassword(emailResponse.getEmail(), emailResponse.getPassword(), emailResponse.getToken());
     }
 }
