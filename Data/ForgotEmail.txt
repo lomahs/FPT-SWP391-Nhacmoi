@@ -30,3 +30,15 @@ Khi đổi thành công, server trả về:
     "status": "User update password successful."
 }
 
+-Api localhost:8080/api/user/register/resend : resend token confirm
+Front-end truyền vào với định dạng:
+{
+    "email": "Email người dùng cần confirm"
+}
+trả về
+{
+    "user": null,
+    "token": "",
+    "status": "Resend Email success."
+}
+
