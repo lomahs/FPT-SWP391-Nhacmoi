@@ -91,17 +91,42 @@ public class UserService implements IUserService {
         return userRepository.findById(id);
     }
 
+    private String createToken(){
+        return UUID.randomUUID().toString();
+    }
+
     @Override
     public User registerNewUser(User user) {
-        user.getAccount().setPassword(passwordEncoder.encode(user.getAccount().getPassword()));
-        user.getAccount().getRoles().add(new Role("ROLE_USER"));
-
-        User newUser = saveUser(user);
-
-        String token = UUID.randomUUID().toString();
+        String token = createToken();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 "",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(5),
+                user
+        );
+            user.getAccount().setPassword(passwordEncoder.encode(user.getAccount().getPassword()));
+            user.getAccount().getRoles().add(new Role("ROLE_USER"));
+            User newUser = saveUser(user);
+
+            confirmationTokenService.saveConfirmationToken(confirmationToken);
+            String link = "http://localhost:8080/api/user/register/confirm?token=" + token;
+            emailSender.send(user.getUser_email(), EmailConfirm(user.getUser_name(), link));
+
+            Playlist playlist = playlistService.savePlaylist(new Playlist("Liked Song", newUser));
+
+            newUser.setListPlaylist(new HashSet<>());
+            newUser.getListPlaylist().add(playlist);
+
+            return newUser;
+    }
+
+    public ResponseEntity<LoginResponse> resendEmailConfirm(String email){
+        User user = userRepository.getUserByEmail(email);
+        String token = createToken();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                null,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(5),
                 user
@@ -110,14 +135,7 @@ public class UserService implements IUserService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         String link = "http://localhost:8080/api/user/register/confirm?token=" + token;
         emailSender.send(user.getUser_email(), EmailConfirm(user.getUser_name(), link));
-
-
-        Playlist playlist = playlistService.savePlaylist(new Playlist("Liked Song", newUser));
-
-        newUser.setListPlaylist(new HashSet<>());
-        newUser.getListPlaylist().add(playlist);
-
-        return newUser;
+        return new ResponseEntity<>(new LoginResponse(null, "", "Resend Email success."), HttpStatus.OK);
     }
 
     @Transactional
@@ -327,9 +345,6 @@ public class UserService implements IUserService {
         return new ResponseEntity<>(new LoginResponse(confirmationToken.getUser(), token, "Allow user change pass."), HttpStatus.OK);
     }
 
-    public String createToken(){
-        return UUID.randomUUID().toString();
-    }
 
     public void forgotPassword(String email){
         User user = userRepository.getUserByEmail(email);

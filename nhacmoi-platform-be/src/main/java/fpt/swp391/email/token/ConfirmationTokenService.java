@@ -24,10 +24,13 @@ public class ConfirmationTokenService {
         return confirmationTokenRepository.findByResetPasswordToken(token);
     }
 
-    public int setConfirmAt(String token) {
-        return confirmationTokenRepository.updateConfirmAt(
+    public void setConfirmAt(String token) {
+        confirmationTokenRepository.updateConfirmAt(
                 token, LocalDateTime.now()
         );
     }
 
+    public void updateConfirmationToken(ConfirmationToken token){
+        confirmationTokenRepository.updateConfirmToken(token.getToken(), token.getCreateAt(), token.getExpiresAt());
+    }
 }
