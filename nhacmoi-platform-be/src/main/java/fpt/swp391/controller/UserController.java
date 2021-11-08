@@ -149,8 +149,4 @@ public class UserController {
         return userServices.updatePassword(emailResponse.getEmail(), emailResponse.getPassword(), emailResponse.getToken());
     }
 
-//    @GetMapping(path = "/register/resend")
-//    public ResponseEntity<LoginResponse> resendEmail(@RequestBody EmailResponse emailResponse){
-//        return userServices.resendEmailConfirm(emailResponse.getEmail());
-//    }
 }

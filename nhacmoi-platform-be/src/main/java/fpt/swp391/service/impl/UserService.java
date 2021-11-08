@@ -135,7 +135,7 @@ public class UserService implements IUserService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         String link = "http://localhost:8080/api/user/register/confirm?token=" + token;
         emailSender.send(user.getUser_email(), EmailConfirm(user.getUser_name(), link));
-        return new ResponseEntity<>(new LoginResponse(null, "", "Resend Email success."), HttpStatus.OK);
+        return new ResponseEntity<>(new LoginResponse(null, "", "User not confirm yet. Confirm email has resend."), HttpStatus.OK);
     }
 
     @Transactional
