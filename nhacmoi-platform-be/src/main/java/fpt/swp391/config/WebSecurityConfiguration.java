@@ -85,6 +85,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //get all playlists
                 .antMatchers(HttpMethod.GET, "/api/playlist").permitAll()
                 //crud specific playlist, add song and remove song from playlists
+                .antMatchers(HttpMethod.GET,"/api/playlist/**").permitAll()
                 .antMatchers("/api/playlist/**").access("hasAnyRole('ROLE_USER', 'ROLE_MODERATOR','ROLE_ADMIN')")
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -94,6 +95,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static void main(String[] args) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-        System.out.println(bCryptPasswordEncoder.encode("admin"));
+        System.out.println(bCryptPasswordEncoder.encode("Datker123@"));
     }
 }

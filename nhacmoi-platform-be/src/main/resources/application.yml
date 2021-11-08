@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     username: sa
-    password: sqlServer123
+    password: 123456
     url: jdbc:sqlserver://localhost:1433;databaseName=nhacmoi
   jpa:
     hibernate:

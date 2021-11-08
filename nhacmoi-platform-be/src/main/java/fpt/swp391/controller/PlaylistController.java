@@ -40,7 +40,7 @@ public class PlaylistController {
     public ResponseEntity<List<Playlist>> getAllPlaylists(@RequestHeader(value = "Authorization", required = false) String token) {
 
         if (token == null) {
-            return new ResponseEntity<>(playlistService.getListPlaylistsOfUser("ADMIN"), HttpStatus.OK);
+            return new ResponseEntity<>(playlistService.getListPlaylistsOfUser("minh123"), HttpStatus.OK);
         }
         Account account = accountService.loadUserByAccountName(jwtService.getAccountNameFromToken(token));
 
