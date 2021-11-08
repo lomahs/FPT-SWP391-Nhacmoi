@@ -114,8 +114,8 @@ public class UserController {
                 httpStatus = HttpStatus.BAD_REQUEST;
             }
         } catch (Exception ex) {
-            loginResponse = new LoginResponse(null, null, "User email is not confirmed.");
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            User user = userServices.getUserByAccountName(account.getAccount_name());
+            return userServices.resendEmailConfirm(user.getUser_email());
         }
         return new ResponseEntity<>(loginResponse, httpStatus);
     }
@@ -149,8 +149,8 @@ public class UserController {
         return userServices.updatePassword(emailResponse.getEmail(), emailResponse.getPassword(), emailResponse.getToken());
     }
 
-    @GetMapping(path = "/register/resend")
-    public ResponseEntity<LoginResponse> resendEmail(@RequestBody EmailResponse emailResponse){
-        return userServices.resendEmailConfirm(emailResponse.getEmail());
-    }
+//    @GetMapping(path = "/register/resend")
+//    public ResponseEntity<LoginResponse> resendEmail(@RequestBody EmailResponse emailResponse){
+//        return userServices.resendEmailConfirm(emailResponse.getEmail());
+//    }
 }
