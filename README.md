@@ -4,6 +4,8 @@ SWP391 subject project at FPT University
 Language: JAVA
 Technologies: Spring Framework, MailDev, JWT
 
+Postman Collection: https://documenter.getpostman.com/view/17938418/UVC8DmQc
+
 ### Software Requirements Specification
 https://docs.google.com/document/d/1JE57cHwNX1vuNbXgRzKMKo6vqFUwfGb2/edit?usp=sharing&ouid=103343203175006582690&rtpof=true&sd=true
 
